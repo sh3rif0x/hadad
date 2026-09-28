@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+export function initHeader() {
 
     const header = document.getElementById("siteHeader");
 
@@ -164,4 +164,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-});
+}

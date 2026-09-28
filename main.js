@@ -1,3 +1,5 @@
+import { initHeader } from "./components/header/script.js";
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const home = document.querySelector(".hero");
@@ -16,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const header = document.getElementById("header");
         const response = await fetch("./components/header/index.html");
         header.innerHTML = await response.text();
+
+        // Header HTML now exists, so initialize its scroll behavior
+        initHeader();
     }
     loadSections()
     const content = [
