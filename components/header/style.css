@@ -7,6 +7,8 @@
 }
 
 .site-header {
+    width: 100vw;
+    max-width: none;
     position: fixed;
     top: 0;
     right: 0;
@@ -295,6 +297,10 @@
     box-shadow: 0 10px 28px rgba(20, 100, 130, 0.18);
 }
 
+header.scrolled {
+    background: #176d91;
+}
+
 
 /* SCROLLED CTA */
 
@@ -386,6 +392,8 @@
 
 @media (max-width: 850px) {
     .site-header {
+    width: 100vw;
+    max-width: none;
         height: 76px;
     }
     /*
@@ -491,6 +499,8 @@
 
 @media (max-width: 480px) {
     .site-header {
+    width: 100vw;
+    max-width: none;
         height: 70px;
     }
     .header-container {

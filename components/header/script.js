@@ -1,6 +1,6 @@
 export function initHeader() {
 
-    const header = document.getElementById("siteHeader");
+    const header = document.getElementById("header");
 
     const servicesItem = document.querySelector(".services-item");
     const servicesToggle = document.querySelector(".services-toggle");
