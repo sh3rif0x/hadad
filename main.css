@@ -1159,3 +1159,118 @@ select:focus-visible {
         width: 100%;
     }
 }
+/* =========================================================
+   FLOATING ACTIONS
+========================================================= */
+
+.floating-actions {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.floating-action {
+    position: fixed;
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    text-decoration: none;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+    transition:
+        transform .3s ease,
+        opacity .3s ease,
+        box-shadow .3s ease;
+}
+
+.floating-action:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, .24);
+}
+
+.floating-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+}
+
+/* Phone */
+
+.floating-phone {
+    left: 24px;
+    top: 50%;
+    background: var(--color-primary);
+    transform: translateY(-50%);
+}
+
+.floating-phone:hover {
+    transform: translateY(calc(-50% - 4px)) scale(1.05);
+}
+
+/* WhatsApp */
+
+.floating-whatsapp {
+    left: 24px;
+    bottom: 24px;
+    background: #25D366;
+}
+
+/* Scroll Top */
+
+.floating-top {
+    right: 24px;
+    bottom: 24px;
+    background: var(--color-bg-dark);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+}
+
+.floating-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.floating-top:hover {
+    transform: translateY(-4px);
+}
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    .floating-action {
+        width: 48px;
+        height: 48px;
+    }
+
+    .floating-phone {
+        left: 16px;
+    }
+
+    .floating-whatsapp {
+        left: 16px;
+        bottom: 16px;
+    }
+
+    .floating-top {
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .floating-icon {
+        font-size: 19px;
+    }
+
+}
+

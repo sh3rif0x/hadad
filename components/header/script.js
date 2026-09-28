@@ -1,167 +1,60 @@
 export function initHeader() {
 
-    const header = document.getElementById("header");
-
+    const header = document.querySelector(".site-header");
     const servicesItem = document.querySelector(".services-item");
     const servicesToggle = document.querySelector(".services-toggle");
-
     const mobileToggle = document.querySelector(".mobile-menu-toggle");
     const mainNav = document.querySelector(".main-nav");
 
-
-    /* =====================================================
-       HEADER SCROLL EFFECT
-    ===================================================== */
+    if (!header) return;
 
     function updateHeader() {
-
-        if (window.scrollY > 40) {
-            header.classList.add("scrolled");
-        } else {
-            header.classList.remove("scrolled");
-        }
-
+        header.classList.toggle("scrolled", window.scrollY > 40);
     }
 
     updateHeader();
-
-    window.addEventListener("scroll", updateHeader, {
-        passive: true
-    });
-
-
-    /* =====================================================
-       SERVICES DROPDOWN
-    ===================================================== */
+    window.addEventListener("scroll", updateHeader, { passive: true });
 
     if (servicesItem && servicesToggle) {
-
         servicesToggle.addEventListener("click", (event) => {
-
             event.preventDefault();
-
-            const isOpen =
-                servicesItem.classList.contains("open");
-
+            const isOpen = servicesItem.classList.contains("open");
             servicesItem.classList.toggle("open", !isOpen);
-
-            servicesToggle.setAttribute(
-                "aria-expanded",
-                String(!isOpen)
-            );
-
+            servicesToggle.setAttribute("aria-expanded", String(!isOpen));
         });
-
     }
-
-
-    /* =====================================================
-       MOBILE MENU
-    ===================================================== */
 
     if (mobileToggle && mainNav) {
-
         mobileToggle.addEventListener("click", () => {
-
-            const isOpen =
-                mainNav.classList.contains("mobile-open");
-
-            mainNav.classList.toggle(
-                "mobile-open", !isOpen
-            );
-
-            mobileToggle.classList.toggle(
-                "active", !isOpen
-            );
-
-            mobileToggle.setAttribute(
-                "aria-expanded",
-                String(!isOpen)
-            );
-
+            const isOpen = mainNav.classList.contains("mobile-open");
+            mainNav.classList.toggle("mobile-open", !isOpen);
+            mobileToggle.classList.toggle("active", !isOpen);
+            mobileToggle.setAttribute("aria-expanded", String(!isOpen));
         });
-
     }
 
-
-    /* =====================================================
-       CLOSE MOBILE MENU WHEN CLICKING NORMAL LINK
-    ===================================================== */
-
-    document.querySelectorAll(
-        ".main-nav a"
-    ).forEach((link) => {
-
+    document.querySelectorAll(".main-nav a").forEach((link) => {
         link.addEventListener("click", () => {
-
-            if (window.innerWidth <= 850) {
-
-                mainNav.classList.remove(
-                    "mobile-open"
-                );
-
-                mobileToggle.classList.remove(
-                    "active"
-                );
-
-                mobileToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
-
+            if (window.innerWidth <= 850 && mainNav && mobileToggle) {
+                mainNav.classList.remove("mobile-open");
+                mobileToggle.classList.remove("active");
+                mobileToggle.setAttribute("aria-expanded", "false");
             }
-
         });
-
     });
-
-
-    /* =====================================================
-       CLOSE DROPDOWN WHEN CLICKING OUTSIDE
-    ===================================================== */
 
     document.addEventListener("click", (event) => {
-
-        if (
-            servicesItem &&
-            !servicesItem.contains(event.target)
-        ) {
-
+        if (servicesItem && servicesToggle && !servicesItem.contains(event.target)) {
             servicesItem.classList.remove("open");
-
-            servicesToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
+            servicesToggle.setAttribute("aria-expanded", "false");
         }
-
     });
-
-
-    /* =====================================================
-       RESET MOBILE STATE WHEN RESIZING
-    ===================================================== */
 
     window.addEventListener("resize", () => {
-
-        if (window.innerWidth > 850) {
-
-            mainNav.classList.remove(
-                "mobile-open"
-            );
-
-            mobileToggle.classList.remove(
-                "active"
-            );
-
-            mobileToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
+        if (window.innerWidth > 850 && mainNav && mobileToggle) {
+            mainNav.classList.remove("mobile-open");
+            mobileToggle.classList.remove("active");
+            mobileToggle.setAttribute("aria-expanded", "false");
         }
-
     });
-
 }

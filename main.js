@@ -164,3 +164,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+/* =========================================================
+   FLOATING ACTIONS
+========================================================= */
+
+const scrollTopButton =
+    document.querySelector("#scrollTopButton");
+
+
+function updateScrollTopButton() {
+
+    if (!scrollTopButton) {
+        return;
+    }
+
+    if (window.scrollY > 500) {
+
+        scrollTopButton.classList.add("show");
+
+    } else {
+
+        scrollTopButton.classList.remove("show");
+
+    }
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    updateScrollTopButton, { passive: true }
+);
+
+
+if (scrollTopButton) {
+
+    scrollTopButton.addEventListener(
+        "click",
+        () => {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+    );
+
+}
+
+
+updateScrollTopButton();
