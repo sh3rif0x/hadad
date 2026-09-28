@@ -1,3 +1,53 @@
+```css
+/* =========================================================
+   ROOT / GLOBAL COLOR SYSTEM
+========================================================= */
+
+:root {
+    /* Main calm blue palette */
+    --color-primary: #176d91;
+    --color-primary-dark: #115a78;
+    --color-primary-light: #dff3fb;
+    --color-blue-50: #f4fbfe;
+    --color-blue-100: #e8f6fc;
+    --color-blue-200: #d6eef7;
+    --color-blue-300: #b9dfed;
+    /* Main backgrounds */
+    --color-bg: #f5fbfd;
+    --color-bg-soft: #edf8fc;
+    --color-bg-white: #ffffff;
+    --color-bg-dark: #12384b;
+    /* Text */
+    --color-text: #173f51;
+    --color-text-dark: #12384b;
+    --color-text-medium: #4f7181;
+    --color-text-light: #7893a0;
+    --color-text-white: #ffffff;
+    /* Borders */
+    --color-border: #d6e8ef;
+    --color-border-dark: rgba(23, 63, 81, 0.15);
+    /* Accent */
+    --color-accent: #2b89ad;
+    --color-accent-light: #b9e8f7;
+    /* Success */
+    --color-success: #168b56;
+    /* Shadows */
+    --shadow-sm: 0 5px 18px rgba(23, 82, 105, 0.08);
+    --shadow-md: 0 12px 35px rgba(23, 82, 105, 0.12);
+    --shadow-lg: 0 20px 55px rgba(23, 82, 105, 0.16);
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    /* Main transition */
+    --transition: 0.3s ease;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -10,9 +60,11 @@ html {
 
 body {
     direction: rtl;
-    background: #07131e;
-    color: #f5f2ed;
+    background: var(--color-bg);
+    color: var(--color-text);
     font-family: Arial, Tahoma, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
 a {
@@ -20,19 +72,51 @@ a {
     text-decoration: none;
 }
 
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
 img {
     display: block;
     width: 100%;
+    max-width: 100%;
 }
+
+ul,
+ol {
+    list-style: none;
+}
+
+
+/* =========================================================
+   GLOBAL SELECTION
+========================================================= */
+
+::selection {
+    background: var(--color-primary);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   GLOBAL SECTION
+========================================================= */
 
 .section {
     padding: 110px clamp(24px, 8vw, 140px);
 }
 
 
-/* =========================
+/* =========================================================
    HERO
-========================= */
+========================================================= */
 
 .hero {
     position: relative;
@@ -43,38 +127,17 @@ img {
     gap: 70px;
     padding: 120px clamp(25px, 9vw, 160px) 110px;
     overflow: hidden;
-    background-color: #07131e;
+    background-color: var(--color-bg-dark);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     transition: background-image 0.8s ease;
 }
 
-.hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient( 90deg, rgba(4, 13, 21, .95), rgba(4, 13, 21, .78), rgba(4, 13, 21, .88));
-    z-index: 0;
-}
 
-.hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient( circle at 50% 50%, transparent, rgba(0, 0, 0, .3));
-    z-index: 2;
-    pointer-events: none;
-}
+/* =========================================================
+   HERO CONTENT
+========================================================= */
 
 .hero-content {
     position: relative;
@@ -85,7 +148,7 @@ img {
 }
 
 .hero-animate {
-    animation: heroIn .8s ease forwards;
+    animation: heroIn 0.8s ease forwards;
 }
 
 @keyframes heroIn {
@@ -99,13 +162,19 @@ img {
     }
 }
 
+
+/* =========================================================
+   HERO EYEBROW
+========================================================= */
+
 .hero-eyebrow {
     position: relative;
     display: inline-block;
     margin-bottom: 28px;
     padding-right: 38px;
-    color: #d2a94f;
-    font-size: 12px;
+    color: var(--color-accent-light);
+    font-size: 14px;
+    font-weight: 800;
     letter-spacing: 2px;
 }
 
@@ -115,18 +184,24 @@ img {
     right: 0;
     top: 50%;
     width: 26px;
-    height: 1px;
-    background: #d2a94f;
+    height: 2px;
+    background: var(--color-accent-light);
+    transform: translateY(-50%);
 }
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
 
 .hero h1 {
     margin: 0;
-    color: #f5f2ed;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(55px, 6vw, 90px);
-    font-weight: 400;
-    line-height: .95;
-    letter-spacing: -3px;
+    color: #ffffff;
+    font-family: Arial, Tahoma, sans-serif;
+    font-size: clamp(52px, 6vw, 86px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
 }
 
 .hero h1 span,
@@ -135,18 +210,29 @@ img {
 }
 
 .hero h1 strong {
-    color: #d4a849;
-    font-weight: 400;
-    font-style: italic;
+    color: #aee4f5;
+    font-weight: 900;
+    font-style: normal;
 }
+
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
 
 .hero-description {
     max-width: 650px;
     margin-top: 30px;
-    color: #a4b0b9;
-    font-size: 16px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 18px;
+    font-weight: 500;
     line-height: 2;
 }
+
+
+/* =========================================================
+   HERO BUTTONS
+========================================================= */
 
 .hero-buttons {
     display: flex;
@@ -159,39 +245,53 @@ img {
 .secondary-btn,
 .whatsapp-btn {
     display: inline-flex;
-    min-height: 54px;
+    min-height: 56px;
     align-items: center;
     justify-content: center;
-    padding: 0 28px;
+    padding: 0 30px;
     border: 1px solid transparent;
-    font-size: 13px;
-    transition: .3s ease;
+    border-radius: var(--radius-sm);
+    font-size: 17px;
+    font-weight: 800;
+    transition: var(--transition);
 }
 
+
+/* PRIMARY */
+
 .primary-btn {
-    color: #101820;
-    background: #d0a444;
-    border-color: #d0a444;
+    color: #ffffff;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .primary-btn:hover {
-    background: #e2bb67;
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+    transform: translateY(-2px);
 }
 
+
+/* SECONDARY */
+
 .secondary-btn {
-    color: #fff;
-    background: rgba(255, 255, 255, .04);
-    border-color: rgba(255, 255, 255, .3);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.45);
 }
 
 .secondary-btn:hover {
-    border-color: #d0a444;
+    color: #ffffff;
+    background: rgba(23, 109, 145, 0.75);
+    border-color: #aee4f5;
+    transform: translateY(-2px);
 }
 
 
-/* =========================
+/* =========================================================
    HERO STATS
-========================= */
+========================================================= */
 
 .hero-stats {
     position: relative;
@@ -203,42 +303,46 @@ img {
 }
 
 .stat {
-    min-height: 78px;
+    min-height: 82px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 15px 24px;
-    background: rgba(5, 20, 32, .8);
-    border: 1px solid rgba(255, 255, 255, .12);
-    transition: .3s ease;
+    padding: 16px 24px;
+    background: rgba(9, 42, 57, 0.78);
+    border: 1px solid rgba(190, 230, 242, 0.25);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    backdrop-filter: blur(8px);
 }
 
 .stat:hover {
-    background: #d0a444;
-    color: #101820;
+    background: var(--color-primary);
+    color: #ffffff;
     transform: translateX(-10px);
+    border-color: var(--color-primary);
 }
 
 .stat strong {
-    font-family: Georgia, serif;
-    font-size: 25px;
-    font-weight: 400;
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.2;
 }
 
 .stat span {
     margin-top: 5px;
-    color: #8d9aa4;
-    font-size: 11px;
+    color: rgba(255, 255, 255, 0.70);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .stat:hover span {
-    color: #101820;
+    color: #ffffff;
 }
 
 
-/* =========================
+/* =========================================================
    HERO NAVIGATION
-========================= */
+========================================================= */
 
 .hero-navigation {
     position: absolute;
@@ -254,9 +358,9 @@ img {
 .hero-counter {
     display: flex;
     gap: 8px;
-    color: #d0a444;
-    font-family: Georgia, serif;
-    font-size: 14px;
+    color: #b9e8f7;
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .hero-timeline {
@@ -267,9 +371,10 @@ img {
 
 .hero-timeline span {
     flex: 1;
-    height: 3px;
+    height: 4px;
     cursor: pointer;
-    background: rgba(255, 255, 255, .25);
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -278,7 +383,7 @@ img {
     display: block;
     width: 100%;
     height: 100%;
-    background: #d0a444;
+    background: #b9e8f7;
     transform: scaleX(0);
     transform-origin: right;
 }
@@ -289,9 +394,9 @@ img {
 }
 
 
-/* =========================
+/* =========================================================
    HEADINGS
-========================= */
+========================================================= */
 
 .section-heading {
     max-width: 760px;
@@ -301,101 +406,115 @@ img {
 .section-heading>span,
 .about-content>span,
 .contact-content>span {
-    color: #d0a444;
-    font-size: 12px;
-    letter-spacing: 2px;
+    color: var(--color-primary);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1px;
 }
 
 .section-heading h2,
 .about h2,
 .contact h2 {
     margin-top: 18px;
-    font-family: Georgia, serif;
+    color: var(--color-text-dark);
     font-size: clamp(40px, 5vw, 65px);
-    font-weight: 400;
+    font-weight: 900;
     line-height: 1.1;
 }
 
 .section-heading h2 strong,
 .about h2 strong,
 .contact h2 strong {
-    color: #d0a444;
-    font-weight: 400;
+    color: var(--color-primary);
+    font-weight: 900;
 }
 
 .section-heading p {
     margin-top: 22px;
-    color: #8f9da8;
+    color: var(--color-text-medium);
+    font-size: 17px;
     line-height: 1.9;
 }
 
 
-/* =========================
+/* =========================================================
    SERVICES
-========================= */
+========================================================= */
 
 .services {
-    background: #f3f0e9;
-    color: #101820;
+    background: var(--color-bg);
+    color: var(--color-text);
 }
 
 .services-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 20px;
 }
 
 .service-card {
     min-height: 300px;
     padding: 35px;
-    background: #fff;
-    border: 1px solid #ddd8cc;
-    transition: .35s ease;
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: 0.35s ease;
 }
 
 .service-card:hover {
-    background: #101c27;
-    color: #fff;
+    background: var(--color-bg-dark);
+    color: #ffffff;
     transform: translateY(-8px);
+    border-color: var(--color-bg-dark);
+    box-shadow: var(--shadow-md);
 }
 
 .service-card>span {
-    color: #c69c3d;
-    font-family: Georgia, serif;
+    color: var(--color-primary);
     font-size: 18px;
+    font-weight: 900;
 }
 
 .service-card h3 {
     margin-top: 45px;
-    font-family: Georgia, serif;
+    color: inherit;
     font-size: 28px;
-    font-weight: 400;
+    font-weight: 900;
+    line-height: 1.3;
 }
 
 .service-card p {
     margin-top: 18px;
-    color: #6f7b83;
+    color: var(--color-text-medium);
+    font-size: 16px;
     line-height: 1.9;
 }
 
 .service-card:hover p {
-    color: #aeb8bf;
+    color: rgba(255, 255, 255, 0.72);
 }
 
 .service-card a {
     display: inline-block;
     margin-top: 28px;
-    color: #bd9135;
-    font-size: 13px;
+    color: var(--color-primary);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.service-card:hover a {
+    color: #aee4f5;
 }
 
 
-/* =========================
+/* =========================================================
    ABOUT
-========================= */
+========================================================= */
 
 .about {
-    background: #081521;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
 }
 
 .about-content {
@@ -405,25 +524,31 @@ img {
 .about-content p {
     max-width: 760px;
     margin-top: 25px;
-    color: #9aa8b2;
+    color: var(--color-text-medium);
     line-height: 2;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .about-content a {
     display: inline-block;
     margin-top: 30px;
-    color: #d0a444;
+    color: var(--color-primary);
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.about-content a:hover {
+    color: var(--color-primary-dark);
 }
 
 
-/* =========================
+/* =========================================================
    PROJECTS
-========================= */
+========================================================= */
 
 .projects {
-    background: #f3f0e9;
-    color: #101820;
+    background: var(--color-bg);
+    color: var(--color-text);
 }
 
 .projects-grid {
@@ -434,13 +559,22 @@ img {
 
 .project-card {
     overflow: hidden;
-    background: #fff;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
 }
 
 .project-card img {
     height: 300px;
     object-fit: cover;
-    transition: transform .5s ease;
+    transition: transform 0.5s ease;
 }
 
 .project-card:hover img {
@@ -449,18 +583,24 @@ img {
 
 .project-card h3 {
     padding: 20px;
-    font-family: Georgia, serif;
+    color: var(--color-text-dark);
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 800;
 }
 
 
-/* =========================
+/* =========================================================
    CONTACT
-========================= */
+========================================================= */
 
 .contact {
-    background: #07131e;
+    background: var(--color-bg-dark);
+    color: #ffffff;
+}
+
+.contact .section-heading h2,
+.contact h2 {
+    color: #ffffff;
 }
 
 .contact-content {
@@ -470,8 +610,9 @@ img {
 .contact-content p {
     max-width: 650px;
     margin-top: 25px;
-    color: #9aa8b2;
+    color: rgba(255, 255, 255, 0.72);
     line-height: 2;
+    font-size: 17px;
 }
 
 .contact-buttons {
@@ -481,15 +622,27 @@ img {
     margin-top: 30px;
 }
 
+
+/* =========================================================
+   WHATSAPP
+========================================================= */
+
 .whatsapp-btn {
-    color: #fff;
-    background: #168b56;
-    border-color: #168b56;
+    color: #ffffff;
+    background: var(--color-success);
+    border-color: var(--color-success);
 }
 
 .whatsapp-btn:hover {
     background: #1ca568;
+    border-color: #1ca568;
+    transform: translateY(-2px);
 }
+
+
+/* =========================================================
+   CONTACT INFO
+========================================================= */
 
 .contact-info {
     display: grid;
@@ -500,37 +653,51 @@ img {
 
 .contact-item {
     padding: 28px;
-    border: 1px solid rgba(255, 255, 255, .12);
-    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-md);
 }
 
 .contact-item span {
     display: block;
     margin-bottom: 12px;
-    color: #d0a444;
-    font-size: 12px;
+    color: #aee4f5;
+    font-size: 14px;
+    font-weight: 800;
 }
 
 .contact-item a,
 .contact-item p {
-    color: #e7e3dc;
-    font-size: 16px;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
 }
+
+.contact-item a:hover {
+    color: #aee4f5;
+}
+
+
+/* =========================================================
+   CONTACT MAP
+========================================================= */
 
 .contact-map {
     margin-top: 35px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: var(--radius-md);
 }
 
 .contact-map iframe {
     display: block;
+    width: 100%;
 }
 
 
-/* =========================
+/* =========================================================
    TABLET
-========================= */
+========================================================= */
 
 @media (max-width: 1000px) {
     .hero {
@@ -552,9 +719,9 @@ img {
 }
 
 
-/* =========================
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 650px) {
     .section {
@@ -568,10 +735,10 @@ img {
     }
     .hero h1 {
         font-size: 48px;
-        letter-spacing: -2px;
+        letter-spacing: -1.5px;
     }
     .hero-description {
-        font-size: 14px;
+        font-size: 16px;
     }
     .hero-buttons {
         flex-direction: column;
@@ -607,6 +774,11 @@ img {
     }
 }
 
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
 @media (max-width: 400px) {
     .hero h1 {
         font-size: 42px;
@@ -623,15 +795,15 @@ img {
 
 
 /* =========================================================
-   JS GENERATED CONTENT FIXES
+   JS GENERATED CONTENT
 ========================================================= */
 
 
-/* =========================
+/* =========================================================
    HERO BACKGROUND
    الصورة نفسها تتحرك
    بدون gradient
-========================= */
+========================================================= */
 
 .hero {
     position: relative;
@@ -643,14 +815,14 @@ img {
     inset: 0;
     z-index: -3;
     overflow: hidden;
-    background: #07131e;
+    background: var(--color-bg-dark);
 }
 
 .hero-background::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, .25);
+    background: rgba(7, 35, 48, 0.28);
     z-index: 2;
     pointer-events: none;
 }
@@ -675,7 +847,9 @@ img {
 }
 
 
-/* لا نحتاج أي overlay قديم */
+/* =========================================================
+   REMOVE OLD HERO OVERLAYS
+========================================================= */
 
 .hero::before,
 .hero::after,
@@ -684,9 +858,9 @@ img {
 }
 
 
-/* =========================
+/* =========================================================
    HERO CONTENT
-========================= */
+========================================================= */
 
 .hero-content {
     position: relative;
@@ -694,10 +868,10 @@ img {
 }
 
 
-/* =========================
+/* =========================================================
    HERO STATS
-   بدون أي icons
-========================= */
+   بدون icons
+========================================================= */
 
 .stat {
     display: flex;
@@ -710,15 +884,44 @@ img {
 }
 
 
-/* =========================
+/* =========================================================
    SERVICE NUMBER
-========================= */
+========================================================= */
 
 .service-number {
     display: block;
 }
 
 
-/* =========================
-   MOBILE HERO
-============
+/* =========================================================
+   ACCESSIBILITY / FOCUS
+========================================================= */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--color-accent-light);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+```

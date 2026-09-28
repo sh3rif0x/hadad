@@ -12,7 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const timelineItems = home.querySelectorAll(".hero-timeline span");
     const currentSlideSpan = home.querySelector(".hero-counter .current");
 
-
+    async function loadSections() {
+        const header = document.getElementById("header");
+        const response = await fetch("./components/header/index.html");
+        header.innerHTML = await response.text();
+    }
+    loadSections()
     const content = [
 
         {
