@@ -1,0 +1,724 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    direction: rtl;
+    background: #07131e;
+    color: #f5f2ed;
+    font-family: Arial, Tahoma, sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    width: 100%;
+}
+
+.section {
+    padding: 110px clamp(24px, 8vw, 140px);
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    align-items: center;
+    gap: 70px;
+    padding: 120px clamp(25px, 9vw, 160px) 110px;
+    overflow: hidden;
+    background-color: #07131e;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: background-image 0.8s ease;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient( 90deg, rgba(4, 13, 21, .95), rgba(4, 13, 21, .78), rgba(4, 13, 21, .88));
+    z-index: 0;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient( circle at 50% 50%, transparent, rgba(0, 0, 0, .3));
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+    max-width: 720px;
+    justify-self: start;
+    text-align: right;
+}
+
+.hero-animate {
+    animation: heroIn .8s ease forwards;
+}
+
+@keyframes heroIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-eyebrow {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 28px;
+    padding-right: 38px;
+    color: #d2a94f;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.hero-eyebrow::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 26px;
+    height: 1px;
+    background: #d2a94f;
+}
+
+.hero h1 {
+    margin: 0;
+    color: #f5f2ed;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(55px, 6vw, 90px);
+    font-weight: 400;
+    line-height: .95;
+    letter-spacing: -3px;
+}
+
+.hero h1 span,
+.hero h1 strong {
+    display: block;
+}
+
+.hero h1 strong {
+    color: #d4a849;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.hero-description {
+    max-width: 650px;
+    margin-top: 30px;
+    color: #a4b0b9;
+    font-size: 16px;
+    line-height: 2;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 38px;
+}
+
+.primary-btn,
+.secondary-btn,
+.whatsapp-btn {
+    display: inline-flex;
+    min-height: 54px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 28px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    transition: .3s ease;
+}
+
+.primary-btn {
+    color: #101820;
+    background: #d0a444;
+    border-color: #d0a444;
+}
+
+.primary-btn:hover {
+    background: #e2bb67;
+}
+
+.secondary-btn {
+    color: #fff;
+    background: rgba(255, 255, 255, .04);
+    border-color: rgba(255, 255, 255, .3);
+}
+
+.secondary-btn:hover {
+    border-color: #d0a444;
+}
+
+
+/* =========================
+   HERO STATS
+========================= */
+
+.hero-stats {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+}
+
+.stat {
+    min-height: 78px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px 24px;
+    background: rgba(5, 20, 32, .8);
+    border: 1px solid rgba(255, 255, 255, .12);
+    transition: .3s ease;
+}
+
+.stat:hover {
+    background: #d0a444;
+    color: #101820;
+    transform: translateX(-10px);
+}
+
+.stat strong {
+    font-family: Georgia, serif;
+    font-size: 25px;
+    font-weight: 400;
+}
+
+.stat span {
+    margin-top: 5px;
+    color: #8d9aa4;
+    font-size: 11px;
+}
+
+.stat:hover span {
+    color: #101820;
+}
+
+
+/* =========================
+   HERO NAVIGATION
+========================= */
+
+.hero-navigation {
+    position: absolute;
+    right: clamp(25px, 9vw, 160px);
+    bottom: 35px;
+    z-index: 10;
+    width: min(390px, 40vw);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.hero-counter {
+    display: flex;
+    gap: 8px;
+    color: #d0a444;
+    font-family: Georgia, serif;
+    font-size: 14px;
+}
+
+.hero-timeline {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+}
+
+.hero-timeline span {
+    flex: 1;
+    height: 3px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, .25);
+    overflow: hidden;
+}
+
+.hero-timeline span::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #d0a444;
+    transform: scaleX(0);
+    transform-origin: right;
+}
+
+.hero-timeline span.active::after {
+    transform: scaleX(1);
+    transition: transform 5s linear;
+}
+
+
+/* =========================
+   HEADINGS
+========================= */
+
+.section-heading {
+    max-width: 760px;
+    margin-bottom: 55px;
+}
+
+.section-heading>span,
+.about-content>span,
+.contact-content>span {
+    color: #d0a444;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.section-heading h2,
+.about h2,
+.contact h2 {
+    margin-top: 18px;
+    font-family: Georgia, serif;
+    font-size: clamp(40px, 5vw, 65px);
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.section-heading h2 strong,
+.about h2 strong,
+.contact h2 strong {
+    color: #d0a444;
+    font-weight: 400;
+}
+
+.section-heading p {
+    margin-top: 22px;
+    color: #8f9da8;
+    line-height: 1.9;
+}
+
+
+/* =========================
+   SERVICES
+========================= */
+
+.services {
+    background: #f3f0e9;
+    color: #101820;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.service-card {
+    min-height: 300px;
+    padding: 35px;
+    background: #fff;
+    border: 1px solid #ddd8cc;
+    transition: .35s ease;
+}
+
+.service-card:hover {
+    background: #101c27;
+    color: #fff;
+    transform: translateY(-8px);
+}
+
+.service-card>span {
+    color: #c69c3d;
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
+
+.service-card h3 {
+    margin-top: 45px;
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: 400;
+}
+
+.service-card p {
+    margin-top: 18px;
+    color: #6f7b83;
+    line-height: 1.9;
+}
+
+.service-card:hover p {
+    color: #aeb8bf;
+}
+
+.service-card a {
+    display: inline-block;
+    margin-top: 28px;
+    color: #bd9135;
+    font-size: 13px;
+}
+
+
+/* =========================
+   ABOUT
+========================= */
+
+.about {
+    background: #081521;
+}
+
+.about-content {
+    max-width: 850px;
+}
+
+.about-content p {
+    max-width: 760px;
+    margin-top: 25px;
+    color: #9aa8b2;
+    line-height: 2;
+    font-size: 16px;
+}
+
+.about-content a {
+    display: inline-block;
+    margin-top: 30px;
+    color: #d0a444;
+}
+
+
+/* =========================
+   PROJECTS
+========================= */
+
+.projects {
+    background: #f3f0e9;
+    color: #101820;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.project-card {
+    overflow: hidden;
+    background: #fff;
+}
+
+.project-card img {
+    height: 300px;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.project-card:hover img {
+    transform: scale(1.05);
+}
+
+.project-card h3 {
+    padding: 20px;
+    font-family: Georgia, serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+
+/* =========================
+   CONTACT
+========================= */
+
+.contact {
+    background: #07131e;
+}
+
+.contact-content {
+    max-width: 800px;
+}
+
+.contact-content p {
+    max-width: 650px;
+    margin-top: 25px;
+    color: #9aa8b2;
+    line-height: 2;
+}
+
+.contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.whatsapp-btn {
+    color: #fff;
+    background: #168b56;
+    border-color: #168b56;
+}
+
+.whatsapp-btn:hover {
+    background: #1ca568;
+}
+
+.contact-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 70px;
+}
+
+.contact-item {
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .03);
+}
+
+.contact-item span {
+    display: block;
+    margin-bottom: 12px;
+    color: #d0a444;
+    font-size: 12px;
+}
+
+.contact-item a,
+.contact-item p {
+    color: #e7e3dc;
+    font-size: 16px;
+}
+
+.contact-map {
+    margin-top: 35px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.contact-map iframe {
+    display: block;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1000px) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+    .hero-content {
+        justify-self: stretch;
+    }
+    .hero-stats {
+        width: min(100%, 420px);
+    }
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+    .section {
+        padding: 80px 22px;
+    }
+    .hero {
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        gap: 45px;
+        padding: 110px 22px 100px;
+    }
+    .hero h1 {
+        font-size: 48px;
+        letter-spacing: -2px;
+    }
+    .hero-description {
+        font-size: 14px;
+    }
+    .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .primary-btn,
+    .secondary-btn,
+    .whatsapp-btn {
+        width: 100%;
+    }
+    .hero-stats {
+        width: 100%;
+    }
+    .hero-navigation {
+        right: 22px;
+        left: 22px;
+        width: auto;
+    }
+    .services-grid,
+    .projects-grid,
+    .contact-info {
+        grid-template-columns: 1fr;
+    }
+    .project-card img {
+        height: 260px;
+    }
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    .footer-bottom {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero h1 {
+        font-size: 42px;
+    }
+    .hero {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .hero-navigation {
+        right: 18px;
+        left: 18px;
+    }
+}
+
+
+/* =========================================================
+   JS GENERATED CONTENT FIXES
+========================================================= */
+
+
+/* =========================
+   HERO BACKGROUND
+   الصورة نفسها تتحرك
+   بدون gradient
+========================= */
+
+.hero {
+    position: relative;
+    isolation: isolate;
+}
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    overflow: hidden;
+    background: #07131e;
+}
+
+.hero-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .25);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-image {
+    position: absolute;
+    inset: -5%;
+    width: 110%;
+    height: 110%;
+    object-fit: cover;
+    transform: scale(1);
+    animation: heroZoom 5s ease-out forwards;
+}
+
+@keyframes heroZoom {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.12);
+    }
+}
+
+
+/* لا نحتاج أي overlay قديم */
+
+.hero::before,
+.hero::after,
+.hero-overlay {
+    display: none !important;
+}
+
+
+/* =========================
+   HERO CONTENT
+========================= */
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+}
+
+
+/* =========================
+   HERO STATS
+   بدون أي icons
+========================= */
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat::before,
+.stat::after {
+    display: none !important;
+}
+
+
+/* =========================
+   SERVICE NUMBER
+========================= */
+
+.service-number {
+    display: block;
+}
+
+
+/* =========================
+   MOBILE HERO
+============
