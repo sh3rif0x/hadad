@@ -1,57 +1,26 @@
-export function initHeader() {
+import fs from "node:fs";
 
-    const header = document.querySelector(".site-header");
-    const servicesItem = document.querySelector(".services-item");
-    const servicesToggle = document.querySelector(".services-toggle");
-    const mobileToggle = document.querySelector(".mobile-menu-toggle");
-    const mainNav = document.querySelector(".main-nav");
-
-    if (!header) return;
-
-    function updateHeader() {
-        header.classList.toggle("scrolled", window.scrollY > 40);
-    }
-
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-
-
-    if (mobileToggle && mainNav) {
-        mobileToggle.addEventListener("click", () => {
-            const isOpen = mainNav.classList.contains("mobile-open");
-            mainNav.classList.toggle("mobile-open", !isOpen);
-            mobileToggle.classList.toggle("active", !isOpen);
-            mobileToggle.setAttribute("aria-expanded", String(!isOpen));
-        });
-    }
-
-    document.querySelectorAll(".main-nav a").forEach((link) => {
-        link.addEventListener("click", () => {
-            if (window.innerWidth <= 850 && mainNav && mobileToggle) {
-                mainNav.classList.remove("mobile-open");
-                mobileToggle.classList.remove("active");
-                mobileToggle.setAttribute("aria-expanded", "false");
-            }
-        });
-    });
-
-    document.addEventListener("click", (event) => {
-        if (servicesItem && servicesToggle && !servicesItem.contains(event.target)) {
-            servicesItem.classList.remove("open");
-            servicesToggle.setAttribute("aria-expanded", "false");
-        }
-    });
-
-    window.addEventListener("resize", () => {
-        if (window.innerWidth > 850 && mainNav && mobileToggle) {
-            mainNav.classList.remove("mobile-open");
-            mobileToggle.classList.remove("active");
-            mobileToggle.setAttribute("aria-expanded", "false");
-        }
-    });
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+function inject(file, start, end, block) {
+  let t = fs.readFileSync(file, "utf8");
+  t = t.replace(new RegExp("\\n*" + esc(start) + "[\\s\\S]*?" + esc(end) + "\\n*", "g"), "\n");
+  fs.writeFileSync(file, t.replace(/\s*$/, "\n") + "\n" + start + "\n" + block.trim() + "\n" + end + "\n");
 }
 
-/* AREAS:START */
+const JS = "components/header/script.js";
+const CSS = "components/header/style.css";
+for (const f of [JS, CSS]) if (!fs.existsSync(f)) { console.error("✖ لم أجد: " + f); process.exit(1); }
+
+/* 1) شيل لسنر services القديم من initHeader */
+let js = fs.readFileSync(JS, "utf8");
+js = js.replace(
+  /\n[ \t]*if \(servicesItem && servicesToggle\) \{\s*servicesToggle\.addEventListener\("click"[\s\S]*?\n    \}\n/,
+  "\n"
+);
+fs.writeFileSync(JS, js);
+
+/* 2) بلوك AREAS الجديد */
+inject(JS, "/* AREAS:START */", "/* AREAS:END */", `
 document.addEventListener("click", function (e) {
     var toggle = e.target.closest(".services-toggle");
     var region = e.target.closest(".areas-region");
@@ -107,4 +76,20 @@ document.addEventListener("mouseout", function (e) {
     var item = e.target.closest && e.target.closest(".nav-item");
     if (item && !item.contains(e.relatedTarget)) item.classList.remove("shut");
 });
-/* AREAS:END */
+`);
+
+/* 3) CSS */
+inject(CSS, "/* SHUT:START */", "/* SHUT:END */", `
+.nav-item.shut > .areas-panel,
+.nav-item.shut > .services-dropdown {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.nav-item.shut .dropdown-arrow {
+    transform: none !important;
+}
+`);
+
+console.log("✔ تم: الضغط على الأب المفتوح بيقفله");
