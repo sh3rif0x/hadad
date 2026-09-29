@@ -106,8 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const item = content[index];
 
-        home.style.backgroundImage =
-            `url("./assets/${item.imageName}")`;
+        setHeroImage(item.imageName);
 
 
         renderHero(item);
@@ -303,3 +302,28 @@ updateScrollTopButton();
 
 })();
 /* BLOGS:END */
+
+/* CINEMATIC:START */
+function setHeroImage(name) {
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+
+    let bg = hero.querySelector(".hero-bg");
+    if (!bg) {
+        bg = document.createElement("div");
+        bg.className = "hero-bg";
+        hero.prepend(bg);
+    }
+
+    const img = new Image();
+    img.className = "hero-slide";
+    img.alt = "";
+    img.src = "./assets/" + name;
+    bg.appendChild(img);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("on")));
+
+    const old = [...bg.querySelectorAll(".hero-slide")].filter((x) => x !== img);
+    setTimeout(() => old.forEach((x) => x.remove()), 1300);
+}
+/* CINEMATIC:END */
