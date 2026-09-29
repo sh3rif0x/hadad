@@ -1,4 +1,175 @@
-/* =========================================================
+#!/usr/bin/env node
+/**
+ * apply-blog-fix.js
+ * Run from your project root:   node apply-blog-fix.js
+ * Or pass the root folder:      node apply-blog-fix.js path/to/project
+ *
+ * It will:
+ *  1. blog/index.html  -> replace the #blogList section with a dark hero
+ *  2. blog/template.js -> replace the <header class="blog-post-hero"> block
+ *  3. data/blog.json   -> set real image.src for every post
+ *  4. blog/style.css   -> replace the whole file with the project palette
+ *
+ * Every file is backed up first as <file>.bak
+ */
+
+const fs = require("fs");
+const path = require("path");
+
+const ROOT = path.resolve(process.argv[2] || process.cwd());
+const p = (...parts) => path.join(ROOT, ...parts);
+
+function backup(file) {
+    fs.copyFileSync(file, file + ".bak");
+}
+
+function need(file) {
+    if (!fs.existsSync(file)) {
+        console.error("✗ File not found: " + file);
+        console.error("  Run this script from your project root.");
+        process.exit(1);
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 1. blog/index.html                                                  */
+/* ------------------------------------------------------------------ */
+
+const LIST_SECTION = `<section id="blogList" class="blog-list-page">
+
+    <div class="blog-hero">
+        <div class="blog-hero-content">
+            <span class="blog-eyebrow">مدونة حداد الرياض</span>
+            <h1>
+                المقالات
+                <strong>والنصائح</strong>
+            </h1>
+            <p>أدلة ونصائح عملية عن الحدادة والمظلات والساندوتش بانل لتختار التنفيذ المناسب لمشروعك.</p>
+        </div>
+    </div>
+
+    <div class="blog-list-body">
+        <div id="blogFilters" class="blog-filters"></div>
+        <div id="blogGrid" class="blog-grid"></div>
+    </div>
+
+</section>`;
+
+function fixIndex() {
+    const file = p("blog", "index.html");
+    need(file);
+    const src = fs.readFileSync(file, "utf8");
+    const re = /<section[^>]*id=["']blogList["'][^>]*>[\s\S]*?<\/section>/;
+    if (!re.test(src)) {
+        console.warn("! blog/index.html: #blogList section not found, skipped");
+        return;
+    }
+    backup(file);
+    fs.writeFileSync(file, src.replace(re, () => LIST_SECTION));
+    console.log("✓ blog/index.html updated");
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. blog/template.js                                                 */
+/* ------------------------------------------------------------------ */
+
+// NOTE: \${ is escaped so the script writes a literal ${ into template.js
+const POST_HEADER = `<header class="blog-post-hero">
+            <div class="blog-post-hero-image">
+                \${img(post.image, true)}
+            </div>
+            <div class="blog-post-hero-overlay"></div>
+
+            <div class="blog-post-hero-content">
+                <nav class="blog-breadcrumb" aria-label="breadcrumb">
+                    <a href="/">الرئيسية</a>
+                    <span>/</span>
+                    <a href="/blog/">المدونة</a>
+                    <span>/</span>
+                    <strong>\${esc(post.category)}</strong>
+                </nav>
+
+                <span class="blog-post-category">\${esc(post.category)}</span>
+                <h1>\${esc(post.title)}</h1>
+
+                <div class="blog-post-meta">
+                    <span>\${esc(fmtDate(post.publishedAt))}</span>
+                    <span>•</span>
+                    <span>\${esc(post.readingTime)}</span>
+                    <span>•</span>
+                    <span>\${esc(site.name || "حداد الرياض")}</span>
+                </div>
+            </div>
+        </header>`;
+
+function fixTemplate() {
+    const file = p("blog", "template.js");
+    need(file);
+    const src = fs.readFileSync(file, "utf8");
+    const re = /<header class="blog-post-hero">[\s\S]*?<\/header>/;
+    if (!re.test(src)) {
+        console.warn('! blog/template.js: <header class="blog-post-hero"> not found, skipped');
+        return;
+    }
+    backup(file);
+    fs.writeFileSync(file, src.replace(re, () => POST_HEADER));
+    console.log("✓ blog/template.js updated");
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. data/blog.json                                                   */
+/* ------------------------------------------------------------------ */
+
+const IMAGES = {
+    "all-blacksmith-works-riyadh": "/assets/image-1790545454628.jpg",
+    "car-parking-shades-riyadh": "/assets/hero-1.jpeg",
+    "garden-and-majlis-shades-types": "/assets/hero-4.jpeg",
+    "privacy-screens-villas-farms-riyadh": "/assets/hero-3.jpeg",
+    "sandwich-panel-benefits-uses": "/assets/0015sandwich.webp",
+    "tempered-glass-security-benefits": "/assets/Aluminum-Sliding-Glass-Doors.webp",
+    "how-to-choose-best-blacksmith-riyadh": "/assets/image-1790545449952.jpg",
+    "iron-doors-windows-railings-designs": "/assets/facades-6.jpg",
+    "factors-affecting-blacksmith-shades-price": "/assets/panel-big.webp",
+    "protect-iron-from-rust-maintenance-tips": "/assets/444.jpeg"
+};
+
+function fixJson() {
+    const file = p("data", "blog.json");
+    need(file);
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+
+    // supports [ ...posts ] or { posts: [ ... ] }
+    const posts = Array.isArray(data)
+        ? data
+        : Array.isArray(data.posts)
+            ? data.posts
+            : Array.isArray(data.articles)
+                ? data.articles
+                : null;
+
+    if (!posts) {
+        console.warn("! data/blog.json: could not find the posts array, skipped");
+        return;
+    }
+
+    let changed = 0;
+    posts.forEach((post) => {
+        const src = IMAGES[post.slug];
+        if (!src) return;
+        post.image = Object.assign({}, post.image, { src });
+        changed++;
+    });
+
+    backup(file);
+    fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
+    console.log("✓ data/blog.json updated (" + changed + " posts)");
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. blog/style.css                                                   */
+/* ------------------------------------------------------------------ */
+
+const CSS = `/* =========================================================
    BLOG (uses variables from /main.css)
 ========================================================= */
 
@@ -332,3 +503,21 @@ html { scroll-behavior: smooth; }
     .blog-related { padding: 0 22px; }
     .blog-cta { padding: 26px 18px; }
 }
+`;
+
+function fixCss() {
+    const file = p("blog", "style.css");
+    if (fs.existsSync(file)) backup(file);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, CSS);
+    console.log("✓ blog/style.css replaced");
+}
+
+/* ------------------------------------------------------------------ */
+
+console.log("Project root: " + ROOT + "\n");
+fixIndex();
+fixTemplate();
+fixJson();
+fixCss();
+console.log("\nDone. Backups saved as *.bak. Hard-refresh the browser with Ctrl+Shift+R.");

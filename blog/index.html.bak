@@ -17,24 +17,14 @@
     <main id="blogPage">
 
         <section id="blogList" class="blog-list-page">
-
-    <div class="blog-hero">
-        <div class="blog-hero-content">
-            <span class="blog-eyebrow">مدونة حداد الرياض</span>
-            <h1>
-                المقالات
-                <strong>والنصائح</strong>
-            </h1>
-            <p>أدلة ونصائح عملية عن الحدادة والمظلات والساندوتش بانل لتختار التنفيذ المناسب لمشروعك.</p>
-        </div>
-    </div>
-
-    <div class="blog-list-body">
-        <div id="blogFilters" class="blog-filters"></div>
-        <div id="blogGrid" class="blog-grid"></div>
-    </div>
-
-</section>
+            <div class="blog-list-header">
+                <span>مدونة حداد الرياض</span>
+                <h1>المقالات والنصائح</h1>
+                <p>أدلة ونصائح عملية عن الحدادة والمظلات والساندوتش بانل لتختار التنفيذ المناسب لمشروعك.</p>
+            </div>
+            <div id="blogFilters" class="blog-filters"></div>
+            <div id="blogGrid" class="blog-grid"></div>
+        </section>
 
         <section id="blogDetail" class="blog-detail-page" hidden></section>
 

@@ -149,30 +149,27 @@ export function renderPost(post, related, site) {
 
     return `
         <header class="blog-post-hero">
-            <div class="blog-post-hero-image">
-                ${img(post.image, true)}
+            <nav class="blog-breadcrumb" aria-label="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span>/</span>
+                <a href="/blog/">المدونة</a>
+                <span>/</span>
+                <strong>${esc(post.category)}</strong>
+            </nav>
+
+            <span class="blog-post-category">${esc(post.category)}</span>
+            <h1>${esc(post.title)}</h1>
+
+            <div class="blog-post-meta">
+                <span>${esc(fmtDate(post.publishedAt))}</span>
+                <span>•</span>
+                <span>${esc(post.readingTime)}</span>
+                <span>•</span>
+                <span>${esc(site.name || "حداد الرياض")}</span>
             </div>
-            <div class="blog-post-hero-overlay"></div>
 
-            <div class="blog-post-hero-content">
-                <nav class="blog-breadcrumb" aria-label="breadcrumb">
-                    <a href="/">الرئيسية</a>
-                    <span>/</span>
-                    <a href="/blog/">المدونة</a>
-                    <span>/</span>
-                    <strong>${esc(post.category)}</strong>
-                </nav>
-
-                <span class="blog-post-category">${esc(post.category)}</span>
-                <h1>${esc(post.title)}</h1>
-
-                <div class="blog-post-meta">
-                    <span>${esc(fmtDate(post.publishedAt))}</span>
-                    <span>•</span>
-                    <span>${esc(post.readingTime)}</span>
-                    <span>•</span>
-                    <span>${esc(site.name || "حداد الرياض")}</span>
-                </div>
+            <div class="blog-post-image">
+                ${img(post.image, true)}
             </div>
         </header>
 

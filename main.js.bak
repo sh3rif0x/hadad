@@ -429,38 +429,3 @@ function setHeroImage(name) {
     }
 })();
 /* FOOTER-LOAD:END */
-
-/* FAQ:START */
-(function () {
-    function initFaq() {
-        var items = document.querySelectorAll(".faq-item");
-        if (!items.length) return;
-
-        function setOpen(item, open) {
-            var btn = item.querySelector(".faq-question");
-            item.classList.toggle("is-open", open);
-            if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
-        }
-
-        var current = document.querySelector(".faq-item.is-open");
-
-        items.forEach(function (item) {
-            var btn = item.querySelector(".faq-question");
-            if (!btn) return;
-
-            btn.addEventListener("click", function () {
-                if (current && current !== item) setOpen(current, false);
-                var willOpen = !item.classList.contains("is-open");
-                setOpen(item, willOpen);
-                current = willOpen ? item : null;
-            });
-        });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initFaq);
-    } else {
-        initFaq();
-    }
-})();
-/* FAQ:END */
