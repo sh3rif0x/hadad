@@ -2495,3 +2495,18 @@ html.lx-snap { scroll-snap-type: none !important; }
     rgba(0,0,0,.50) 100%) !important;
 }
 /* HERO-OVERLAY:END */
+
+/* INTRO-IMG:START */
+.project-intro{ min-height:0; }
+.project-intro-image{
+  display:flex; align-items:center; justify-content:center;
+  min-height:0; padding:clamp(24px,4vw,60px);
+  background:var(--color-bg-dark);
+}
+.project-intro-image img{
+  width:100%; height:auto; max-height:560px;
+  object-fit:contain; border-radius:18px;
+}
+@media (max-width:1000px){ .project-intro-image{ min-height:0; } }
+@media (max-width:650px){ .project-intro-image{ min-height:0; padding:22px; } }
+/* INTRO-IMG:END */
