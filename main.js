@@ -327,3 +327,105 @@ function setHeroImage(name) {
     setTimeout(() => old.forEach((x) => x.remove()), 1300);
 }
 /* CINEMATIC:END */
+
+/* STORY:START */
+(function () {
+
+    function init() {
+        var root = document.getElementById("story");
+        if (!root) return;
+
+        document.documentElement.classList.remove("lx-snap");
+
+        var items = [].slice.call(root.querySelectorAll(".lx-item"));
+        var slides = [].slice.call(root.querySelectorAll(".lx-slide"));
+        var dots = [].slice.call(root.querySelectorAll(".lx-dot"));
+        var track = root.querySelector(".lx-track");
+        var list = root.querySelector(".lx-list");
+        var cap = root.querySelector(".lx-caption");
+        var capT = root.querySelector(".lx-cap-title");
+        var capD = root.querySelector(".lx-cap-desc");
+        var visual = root.querySelector(".lx-visual");
+        var N = items.length;
+        var cur = -1;
+
+        function set(i) {
+            i = Math.max(0, Math.min(N - 1, i));
+            if (i === cur) return;
+            var first = cur === -1;
+            cur = i;
+
+            track.style.transform = "translateY(" + (-i * 100 / N) + "%)";
+            list.style.setProperty("--p", ((i + 1) / N).toFixed(4));
+
+            items.forEach(function (el, k) {
+                el.classList.toggle("on", k === i);
+                el.setAttribute("aria-selected", k === i ? "true" : "false");
+            });
+            slides.forEach(function (el, k) { el.classList.toggle("on", k === i); });
+            dots.forEach(function (el, k) { el.classList.toggle("on", k === i); });
+
+            capT.textContent = items[i].getAttribute("data-ct");
+            capD.textContent = items[i].getAttribute("data-cd");
+            cap.classList.remove("in");
+            void cap.offsetWidth;
+            cap.classList.add("in");
+
+            if (!first) root.classList.add("moved");
+        }
+
+        items.forEach(function (el, k) {
+            el.addEventListener("mouseenter", function () { set(k); });
+            el.addEventListener("focus", function () { set(k); });
+            el.addEventListener("click", function () { set(k); });
+        });
+        dots.forEach(function (el, k) {
+            el.addEventListener("mouseenter", function () { set(k); });
+            el.addEventListener("click", function () { set(k); });
+        });
+        root.querySelector(".lx-prev").addEventListener("click", function () { set(cur - 1); });
+        root.querySelector(".lx-next").addEventListener("click", function () { set(cur + 1); });
+
+        /* سحب بالإصبع على الموبايل */
+        var y0 = 0;
+        visual.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
+        visual.addEventListener("touchend", function (e) {
+            var d = y0 - e.changedTouches[0].clientY;
+            if (Math.abs(d) < 45) return;
+            set(cur + (d > 0 ? 1 : -1));
+        }, { passive: true });
+
+        set(0);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+
+})();
+/* STORY:END */
+
+/* FOOTER-LOAD:START */
+(async function loadFooter() {
+    async function run() {
+        const target = document.getElementById("footer");
+        if (!target) return;
+        try {
+            const r = await fetch("/components/footer/index.html");
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            let html = await r.text();
+            html = html.replace(/^\s*```html\s*/i, "").replace(/\s*```\s*$/, "");
+            target.innerHTML = html;
+        } catch (e) {
+            console.error("Footer load error:", e);
+        }
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", run);
+    } else {
+        run();
+    }
+})();
+/* FOOTER-LOAD:END */
