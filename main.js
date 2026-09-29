@@ -216,3 +216,90 @@ if (scrollTopButton) {
 
 
 updateScrollTopButton();
+
+/* BLOGS:START */
+(function () {
+
+    const BLOGS_DATA = "./data/blog.json";
+    const BLOGS_LIMIT = 6;
+    const BLOGS_ARTICLE_URL = "/blog/";
+    const BLOGS_FALLBACK_IMAGES = ["hero-1.jpeg", "hero-2.jpeg", "hero-3.jpeg", "hero-4.jpeg", "hero-5.jpeg"];
+
+    const escapeHTML = (value) =>
+        String(value == null ? "" : value).replace(/[&<>"']/g, (c) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+
+    function blogCard(post) {
+
+        const image = post.image && post.image.src ? post.image.src : "";
+        const alt = post.image && post.image.alt ? post.image.alt : post.title;
+        const link = BLOGS_ARTICLE_URL + encodeURIComponent(post.slug) + "/";
+
+        return '<a class="blog-card" href="' + escapeHTML(link) + '">' +
+            '<div class="blog-card-body">' +
+            '<div class="blog-card-meta">' +
+            (post.category ? '<b>' + escapeHTML(post.category) + '</b>' : '') +
+            (post.readingTime ? '<span>' + escapeHTML(post.readingTime) + '</span>' : '') +
+            '</div>' +
+            '<h3>' + escapeHTML(post.title) + '</h3>' +
+            '<p>' + escapeHTML(post.excerpt) + '</p>' +
+            '<span class="blog-card-more">اقرأ المزيد ←</span>' +
+            '</div>' +
+            '<div class="blog-card-image">' +
+            '<img src="' + escapeHTML(image) + '" alt="' + escapeHTML(alt) + '" loading="lazy">' +
+            '</div>' +
+            '</a>';
+    }
+
+    async function loadBlogs() {
+
+        const grid = document.getElementById("blogsGrid");
+
+        if (!grid) {
+            return;
+        }
+
+        grid.innerHTML = '<p class="blogs-state">جاري تحميل المقالات...</p>';
+
+        try {
+
+            const response = await fetch(BLOGS_DATA);
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+
+            const data = await response.json();
+            const posts = (Array.isArray(data) ? data : data.posts || []).slice(0, BLOGS_LIMIT);
+
+            if (!posts.length) {
+                grid.innerHTML = '<p class="blogs-state">لا توجد مقالات حاليًا.</p>';
+                return;
+            }
+
+            grid.innerHTML = posts.map(blogCard).join("");
+
+            /* لو الصورة غير موجودة نستبدلها بصورة من assets */
+            grid.querySelectorAll(".blog-card-image img").forEach((img, i) => {
+                img.addEventListener("error", () => {
+                    img.src = "./assets/" + BLOGS_FALLBACK_IMAGES[i % BLOGS_FALLBACK_IMAGES.length];
+                }, { once: true });
+            });
+
+        } catch (error) {
+
+            console.error("Blogs load error:", error);
+            grid.innerHTML = '<p class="blogs-state">تعذر تحميل المقالات.</p>';
+
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadBlogs);
+    } else {
+        loadBlogs();
+    }
+
+})();
+/* BLOGS:END */

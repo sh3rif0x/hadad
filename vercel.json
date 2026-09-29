@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/services/:slug([^/.]+)", "destination": "/services/index.html" },
+    { "source": "/services/:slug([^/.]+)/", "destination": "/services/index.html" },
+    { "source": "/blog/:slug([^/.]+)", "destination": "/blog/index.html" },
+    { "source": "/blog/:slug([^/.]+)/", "destination": "/blog/index.html" }
+  ]
+}
