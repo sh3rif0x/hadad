@@ -1,229 +1,30 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الخدمات | حداد الرياض</title>
-
-    <meta
-        name="description"
-        content="جميع خدمات حداد الرياض">
-
-    <link
-        rel="stylesheet"
-        href="/main.css">
-
-    <link
-        rel="stylesheet"
-        href="/components/header/style.css">
-
-    <link
-        rel="stylesheet"
-        href="/components/footer/style.css">
-
-    <link
-        rel="stylesheet"
-        href="/services/style.css">
-
+    <link rel="icon" href="/assets/logo.png">
+    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/components/header/style.css">
+    <link rel="stylesheet" href="/components/footer/style.css">
+    <link rel="stylesheet" href="/services/style.css">
 </head>
-
-
 <body>
-
     <div id="header"></div>
-
-
     <main id="servicesPage">
-
-        <!-- =========================================
-             SERVICES LIST
-        ========================================== -->
-
-        <section
-            id="servicesList"
-            class="services-list-page">
-
+        <section id="servicesList" class="services-list-page">
             <div class="services-list-header">
-
-                <span>
-                    خدمات حداد الرياض
-                </span>
-
-                <h1>
-                    جميع خدماتنا
-                </h1>
-
-                <p>
-                    نقدم مجموعة متكاملة من خدمات الحدادة
-                    والأعمال المعدنية والساندوتش بانل والزجاج.
-                </p>
-
+                <span>خدمات حداد الرياض</span>
+                <h1>جميع خدماتنا</h1>
+                <p>نقدم مجموعة متكاملة من خدمات الحدادة والأعمال المعدنية والساندوتش بانل والزجاج.</p>
             </div>
-
-
-            <div
-                id="servicesGrid"
-                class="services-grid">
-            </div>
-
+            <div id="servicesGrid" class="services-grid"></div>
         </section>
-
-
-        <!-- =========================================
-             SERVICE DETAIL
-        ========================================== -->
-
-        <section
-            id="serviceDetail"
-            class="service-detail-page"
-            hidden>
-
-            <section class="service-hero">
-
-                <div class="service-hero-image">
-
-                    <img
-                        id="serviceImage"
-                        src=""
-                        alt="">
-
-                </div>
-
-
-                <div class="service-hero-overlay"></div>
-
-
-                <div class="service-hero-content">
-
-                    <span class="service-eyebrow">
-                        خدمات حداد الرياض
-                    </span>
-
-                    <h1 id="serviceTitle"></h1>
-
-                    <p id="serviceDescription"></p>
-
-
-                    <div class="service-buttons">
-
-                        <a
-                            href="tel:0534107471"
-                            class="service-btn service-btn-primary">
-
-                            اتصل بنا
-
-                        </a>
-
-
-                        <a
-                            href="https://wa.me/966534107471"
-                            target="_blank"
-                            rel="noopener"
-                            class="service-btn service-btn-secondary">
-
-                            مراسلتنا
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <section class="service-content">
-
-                <div class="service-layout">
-
-
-                    <!-- STICKY IMAGE -->
-
-                    <aside class="service-sticky">
-
-                        <div class="service-sticky-image">
-
-                            <img
-                                id="serviceStickyImage"
-                                src=""
-                                alt="">
-
-                        </div>
-
-
-                        <div class="service-sticky-caption">
-
-                            <span>
-                                خدماتنا
-                            </span>
-
-                            <strong id="serviceStickyTitle">
-                            </strong>
-
-                        </div>
-
-                    </aside>
-
-
-                    <!-- ARTICLE -->
-
-                    <article
-                        class="service-article"
-                        id="serviceArticle">
-                    </article>
-
-
-                </div>
-
-            </section>
-
-        </section>
-
-
-        <!-- =========================================
-             NOT FOUND
-        ========================================== -->
-
-        <section
-            id="serviceNotFound"
-            class="service-not-found"
-            hidden>
-
-            <span>
-                404
-            </span>
-
-            <h1>
-                الخدمة غير موجودة
-            </h1>
-
-            <p>
-                الخدمة المطلوبة غير موجودة.
-            </p>
-
-            <a href="/services/">
-                العودة إلى الخدمات
-            </a>
-
-        </section>
-
+        <section id="serviceDetail" class="service-detail-page" hidden></section>
+        <section id="serviceNotFound" class="service-not-found" hidden></section>
     </main>
-
-
     <div id="footer"></div>
-
-
-    <script
-        type="module"
-        src="/services/script.js">
-    </script>
-
+    <script type="module" src="/services/script.js"></script>
 </body>
-
 </html>

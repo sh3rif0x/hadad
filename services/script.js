@@ -1,645 +1,98 @@
-import {
-    initHeader
-} from "/components/header/script.js";
+import { initHeader } from "/components/header/script.js";
+import { renderList, renderService, renderNotFound } from "/services/template.js";
 
+const DEBUG = new URLSearchParams(location.search).has("debug") || localStorage.getItem("debug") === "1";
+const log = (...a) => DEBUG && console.log("%c[services]", "color:#e67e22", ...a);
+const $ = s => document.querySelector(s);
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
+const servicesList = $("#servicesList");
+const servicesGrid = $("#servicesGrid");
+const serviceDetail = $("#serviceDetail");
+const serviceNotFound = $("#serviceNotFound");
 
-const servicesList =
-    document.querySelector("#servicesList");
-
-const servicesGrid =
-    document.querySelector("#servicesGrid");
-
-const serviceDetail =
-    document.querySelector("#serviceDetail");
-
-const serviceNotFound =
-    document.querySelector("#serviceNotFound");
-
-const serviceTitle =
-    document.querySelector("#serviceTitle");
-
-const serviceDescription =
-    document.querySelector("#serviceDescription");
-
-const serviceImage =
-    document.querySelector("#serviceImage");
-
-const serviceStickyImage =
-    document.querySelector("#serviceStickyImage");
-
-const serviceStickyTitle =
-    document.querySelector("#serviceStickyTitle");
-
-const serviceArticle =
-    document.querySelector("#serviceArticle");
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-async function loadHeader() {
-
-    const header =
-        document.querySelector("#header");
-
-    if (!header) {
-        return;
-    }
-
-    const response =
-        await fetch(
-            "/components/header/index.html"
-        );
-
-    if (!response.ok) {
-        throw new Error("Failed to load header");
-    }
-
-    header.innerHTML =
-        await response.text();
-
-    initHeader();
+async function loadComponent(selector, url) {
+    const target = $(selector);
+    if (!target) return;
+    const r = await fetch(url);
+    log("component", url, r.status);
+    if (!r.ok) throw new Error("Failed to load " + url + " (" + r.status + ")");
+    target.innerHTML = await r.text();
 }
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-async function loadFooter() {
-
-    const footer =
-        document.querySelector("#footer");
-
-    if (!footer) {
-        return;
-    }
-
-    const response =
-        await fetch(
-            "/components/footer/index.html"
-        );
-
-    if (!response.ok) {
-        throw new Error("Failed to load footer");
-    }
-
-    footer.innerHTML =
-        await response.text();
-}
-
-
-/* =========================================================
-   LOAD SERVICES
-========================================================= */
 
 async function loadServices() {
-
-    const response =
-        await fetch(
-            "/services/services.json"
-        );
-
-    if (!response.ok) {
-        throw new Error(
-            "Failed to load /services/services.json"
-        );
-    }
-
-    return await response.json();
+    const url = "/data/services.json";
+    const r = await fetch(url);
+    log("fetch", url, r.status);
+    if (!r.ok) throw new Error("Failed to load " + url + " (" + r.status + ")");
+    const data = await r.json();
+    const services = Array.isArray(data) ? data : data.services;
+    if (!Array.isArray(services)) throw new Error("services.json must be an array");
+    log("services:", services.map(s => s.slug));
+    return services;
 }
-
-
-/* =========================================================
-   GET SERVICE SLUG
-========================================================= */
 
 function getServiceSlug() {
-
-    const path =
-        window.location.pathname
-            .replace(/\/+$/, "");
-
-    const parts =
-        path
-            .split("/")
-            .filter(Boolean);
-
-    /*
-        /services/
-            => null
-
-        /services/sandwich-panel/
-            => sandwich-panel
-    */
-
-    if (
-        parts.length < 2 ||
-        parts[0] !== "services"
-    ) {
-        return null;
-    }
-
-    return parts[1];
+    const parts = location.pathname.split("/").filter(Boolean);
+    const i = parts.indexOf("services");
+    const slug = i === -1 ? null : parts[i + 1] || null;
+    log("pathname:", location.pathname, "| slug:", slug);
+    return slug ? decodeURIComponent(slug) : null;
 }
 
-
-/* =========================================================
-   IMAGE PATH
-========================================================= */
-
-function getImagePath(image) {
-
-    if (!image) {
-        return "";
-    }
-
-    if (image.startsWith("/")) {
-        return image;
-    }
-
-    if (image.startsWith("../")) {
-        return "/" + image.replace(/^(\.\.\/)+/, "");
-    }
-
-    if (image.startsWith("./")) {
-        return "/services/" + image.substring(2);
-    }
-
-    return "/" + image;
+function findService(services, slug) {
+    if (!slug) return null;
+    const w = slug.trim().toLowerCase();
+    return services.find(s => String(s.slug).trim().toLowerCase() === w) || null;
 }
 
+function show(section) {
+    if (servicesList) servicesList.hidden = section !== "list";
+    if (serviceDetail) serviceDetail.hidden = section !== "detail";
+    if (serviceNotFound) serviceNotFound.hidden = section !== "404";
+}
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+function showServicesList(services) {
+    show("list");
+    if (servicesGrid) servicesGrid.innerHTML = renderList(services);
+    document.title = "الخدمات | حداد الرياض";
+}
 
-function escapeHTML(value) {
+function showServiceDetail(service) {
+    show("detail");
+    if (serviceDetail) serviceDetail.innerHTML = renderService(service);
+    document.title = (service.title || "الخدمة") + " | حداد الرياض";
+}
 
-    if (value === undefined || value === null) {
-        return "";
+function showNotFound() {
+    show("404");
+    if (serviceNotFound) serviceNotFound.innerHTML = renderNotFound();
+    document.title = "404 | حداد الرياض";
+}
+
+async function init() {
+    try {
+        log("page:", location.href, "| has #servicesList:", !!servicesList);
+        await loadComponent("#header", "/components/header/index.html");
+        initHeader();
+        await loadComponent("#footer", "/components/footer/index.html");
+
+        const services = await loadServices();
+        const slug = getServiceSlug();
+
+        if (!slug) return showServicesList(services);
+
+        const service = findService(services, slug);
+        log("route: DETAIL", slug, service ? "FOUND" : "NOT FOUND");
+        if (!service) return showNotFound();
+        showServiceDetail(service);
+    } catch (error) {
+        console.error("Services initialization failed:", error);
+        showNotFound();
     }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
 
-
-/* =========================================================
-   RENDER ALL SERVICES
-========================================================= */
-
-function renderServices(services) {
-
-    servicesList.hidden = false;
-    serviceDetail.hidden = true;
-    serviceNotFound.hidden = true;
-
-    servicesGrid.innerHTML = "";
-
-
-    services.forEach((service, index) => {
-
-        const slug =
-            escapeHTML(service.slug);
-
-        const title =
-            escapeHTML(service.title);
-
-        const description =
-            escapeHTML(
-                service.heroDescription || ""
-            );
-
-        const image =
-            getImagePath(service.image);
-
-
-        const card = document.createElement("a");
-
-        card.className =
-            "service-card";
-
-        card.href =
-            `/services/${slug}/`;
-
-
-        card.innerHTML = `
-
-            <div class="service-card-image">
-
-                <img
-                    src="${image}"
-                    alt="${escapeHTML(service.heroAlt || title)}"
-                    loading="${index < 3 ? "eager" : "lazy"}">
-
-            </div>
-
-
-            <div class="service-card-content">
-
-                <span class="service-card-number">
-                    ${String(index + 1).padStart(2, "0")}
-                </span>
-
-                <h2>
-                    ${title}
-                </h2>
-
-                <p>
-                    ${description}
-                </p>
-
-                <span class="service-card-link">
-                    عرض الخدمة ←
-                </span>
-
-            </div>
-
-        `;
-
-
-        servicesGrid.appendChild(card);
-
-    });
-
-
-    document.title =
-        "الخدمات | حداد الرياض";
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+} else {
+    init();
 }
-
-
-/* =========================================================
-   FIND SERVICE
-========================================================= */
-
-function findService(
-    services,
-    slug
-) {
-
-    return services.find(
-        service =>
-            service.slug === slug
-    );
-}
-
-
-/* =========================================================
-   RENDER SERVICE DETAIL
-========================================================= */
-
-function renderService(service) {
-
-    servicesList.hidden = true;
-    serviceDetail.hidden = false;
-    serviceNotFound.hidden = true;
-
-
-    const title =
-        service.title || "";
-
-    const description =
-        service.heroDescription || "";
-
-    const image =
-        getImagePath(service.image);
-
-
-    serviceTitle.textContent =
-        title;
-
-    serviceDescription.textContent =
-        description;
-
-
-    serviceImage.src =
-        image;
-
-    serviceImage.alt =
-        service.heroAlt || title;
-
-
-    serviceStickyImage.src =
-        image;
-
-    serviceStickyImage.alt =
-        service.heroAlt || title;
-
-
-    serviceStickyTitle.textContent =
-        title;
-
-
-    document.title =
-        `${title} | حداد الرياض`;
-
-
-    const article =
-        service.article || {};
-
-
-    let html = `
-
-        <header class="article-header">
-
-            <span class="article-label">
-                ${escapeHTML(title)}
-            </span>
-
-            <h2>
-                ${escapeHTML(
-                    article.introTitle || title
-                )}
-            </h2>
-
-            <p>
-                ${escapeHTML(
-                    article.intro || description
-                )}
-            </p>
-
-        </header>
-
-    `;
-
-
-    /* =====================================================
-       ARTICLE SECTIONS
-    ===================================================== */
-
-    if (
-        Array.isArray(article.sections)
-    ) {
-
-        article.sections.forEach(
-            (section, index) => {
-
-                html += `
-
-                    <section class="article-section">
-
-                        <div class="article-number">
-                            ${String(index + 1).padStart(2, "0")}
-                        </div>
-
-                        <div class="article-section-content">
-
-                            <h3>
-                                ${escapeHTML(
-                                    section.title || ""
-                                )}
-                            </h3>
-
-                            <p>
-                                ${escapeHTML(
-                                    section.content || ""
-                                )}
-                            </p>
-
-                        </div>
-
-                    </section>
-
-                `;
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       FAQ
-    ===================================================== */
-
-    if (
-        Array.isArray(article.faq) &&
-        article.faq.length
-    ) {
-
-        html += `
-
-            <section class="service-faq">
-
-                <div class="faq-heading">
-
-                    <span>
-                        الأسئلة الشائعة
-                    </span>
-
-                    <h2>
-                        أسئلة عن ${escapeHTML(title)}
-                    </h2>
-
-                </div>
-
-                <div class="faq-list">
-
-        `;
-
-
-        article.faq.forEach(
-            (item, index) => {
-
-                html += `
-
-                    <details class="faq-item">
-
-                        <summary>
-
-                            <span>
-                                ${String(index + 1).padStart(2, "0")}
-                            </span>
-
-                            <strong>
-                                ${escapeHTML(
-                                    item.question || ""
-                                )}
-                            </strong>
-
-                        </summary>
-
-                        <p>
-                            ${escapeHTML(
-                                item.answer || ""
-                            )}
-                        </p>
-
-                    </details>
-
-                `;
-
-            }
-        );
-
-
-        html += `
-
-                </div>
-
-            </section>
-
-        `;
-
-    }
-
-
-    /* =====================================================
-       CTA
-    ===================================================== */
-
-    html += `
-
-        <section class="article-cta">
-
-            <div>
-
-                <span>
-                    تحتاج هذه الخدمة؟
-                </span>
-
-                <h2>
-                    خلنا نعرف تفاصيل مشروعك.
-                </h2>
-
-                <p>
-                    تواصل معنا وأرسل المقاسات
-                    أو صور المكان والتفاصيل
-                    التي تحتاجها.
-                </p>
-
-            </div>
-
-
-            <div class="article-cta-buttons">
-
-                <a
-                    href="tel:0534107471"
-                    class="service-btn service-btn-primary">
-
-                    اتصل بنا
-
-                </a>
-
-
-                <a
-                    href="https://wa.me/966534107471"
-                    target="_blank"
-                    rel="noopener"
-                    class="service-btn service-btn-secondary">
-
-                    مراسلتنا
-
-                </a>
-
-            </div>
-
-        </section>
-
-    `;
-
-
-    serviceArticle.innerHTML =
-        html;
-}
-
-
-/* =========================================================
-   NOT FOUND
-========================================================= */
-
-function renderNotFound() {
-
-    servicesList.hidden = true;
-    serviceDetail.hidden = true;
-    serviceNotFound.hidden = false;
-
-    document.title =
-        "404 | حداد الرياض";
-}
-
-
-/* =========================================================
-   INIT
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-
-        try {
-
-            await loadHeader();
-
-            await loadFooter();
-
-
-            const services =
-                await loadServices();
-
-
-            const slug =
-                getServiceSlug();
-
-
-            /*
-                /services/
-                => SHOW ALL SERVICES
-            */
-
-            if (!slug) {
-
-                renderServices(
-                    services
-                );
-
-                return;
-            }
-
-
-            /*
-                /services/service-name/
-                => SHOW DETAIL
-            */
-
-            const service =
-                findService(
-                    services,
-                    slug
-                );
-
-
-            if (!service) {
-
-                renderNotFound();
-
-                return;
-            }
-
-
-            renderService(
-                service
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Services initialization failed:",
-                error
-            );
-
-        }
-
-    }
-);
