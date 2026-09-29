@@ -214,33 +214,3 @@ export function renderNotFound() {
         <a href="/blog/">العودة إلى المدونة</a>
     `;
 }
-
-/* PAGINATION:START */
-export function renderPagination(total, page, perPage) {
-    var pages = Math.ceil(total / perPage);
-    if (pages <= 1) return "";
-
-    var seq = [];
-    for (var i = 1; i <= pages; i++) {
-        if (i === 1 || i === pages || Math.abs(i - page) <= 1) seq.push(i);
-        else if (seq[seq.length - 1] !== "...") seq.push("...");
-    }
-
-    var out = '<button type="button" class="pg-btn pg-nav" data-page="' + (page - 1) + '"' +
-        (page === 1 ? " disabled" : "") + '>→ السابق</button>';
-
-    seq.forEach(function (p) {
-        if (p === "...") {
-            out += '<span class="pg-dots">…</span>';
-        } else {
-            out += '<button type="button" class="pg-btn' + (p === page ? " is-active" : "") + '" data-page="' + p + '"' +
-                (p === page ? ' aria-current="page"' : "") + ">" + p + "</button>";
-        }
-    });
-
-    out += '<button type="button" class="pg-btn pg-nav" data-page="' + (page + 1) + '"' +
-        (page === pages ? " disabled" : "") + '>التالي ←</button>';
-
-    return out;
-}
-/* PAGINATION:END */

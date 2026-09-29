@@ -38,7 +38,6 @@
     <div class="blog-list-body">
         <div id="blogFilters" class="blog-filters"></div>
         <div id="blogGrid" class="blog-grid"></div>
-        <nav id="blogPagination" class="blog-pagination" aria-label="تنقل الصفحات"></nav>
     </div>
 
 </section>

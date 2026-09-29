@@ -1,5 +1,5 @@
 import { initHeader } from "/components/header/script.js";
-import { renderList, renderFilters, renderPost, renderNotFound, renderPagination } from "/blog/template.js";
+import { renderList, renderFilters, renderPost, renderNotFound } from "/blog/template.js";
 
 /* DEBUG MODE: add ?debug=1 to the URL, or localStorage.setItem("debug","1") */
 const DEBUG =
@@ -149,59 +149,14 @@ function show(section) {
     if (blogNotFound) blogNotFound.hidden = section !== "404";
 }
 
-/* PAGINATION:START */
-const PER_PAGE = 15;
-const blogPagination = $("#blogPagination");
-let currentPage = Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
-let lastCategory = activeCategory;
-
-function setPageUrl(push) {
-    const u = new URL(location.href);
-    if (currentPage > 1) u.searchParams.set("page", currentPage);
-    else u.searchParams.delete("page");
-    history[push ? "pushState" : "replaceState"]({}, "", u);
-}
-
 function drawList() {
     const filtered = activeCategory === "all"
         ? posts
         : posts.filter(p => p.category === activeCategory);
 
-    if (activeCategory !== lastCategory) {
-        lastCategory = activeCategory;
-        currentPage = 1;
-        setPageUrl(false);
-    }
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-    if (currentPage > totalPages) { currentPage = totalPages; setPageUrl(false); }
-
-    const start = (currentPage - 1) * PER_PAGE;
-    const pageItems = filtered.slice(start, start + PER_PAGE);
-
     if (blogFilters) blogFilters.innerHTML = renderFilters(posts, activeCategory);
-    if (blogGrid) blogGrid.innerHTML = renderList(pageItems);
-    if (blogPagination) blogPagination.innerHTML = renderPagination(filtered.length, currentPage, PER_PAGE);
+    if (blogGrid) blogGrid.innerHTML = renderList(filtered);
 }
-
-if (blogPagination) {
-    blogPagination.addEventListener("click", e => {
-        const btn = e.target.closest("[data-page]");
-        if (!btn || btn.disabled) return;
-        currentPage = parseInt(btn.getAttribute("data-page"), 10) || 1;
-        setPageUrl(true);
-        drawList();
-        const top = blogList && blogList.querySelector(".blog-list-body");
-        if (top) top.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-}
-
-window.addEventListener("popstate", () => {
-    if (!blogList || blogList.hidden) return;
-    currentPage = Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
-    drawList();
-});
-/* PAGINATION:END */
 
 function showList() {
     show("list");
