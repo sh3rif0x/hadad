@@ -29,40 +29,41 @@ document.addEventListener("DOMContentLoaded", () => {
             imageName: "hero-1.jpeg",
             eyebrow: "حداد الرياض",
             h1: ["أعمال", "الحدادة", "باحترافية"],
-            paragraph: "تنفيذ أعمال الحدادة والهياكل الحديدية بمختلف أنواعها للمنازل والفلل والمنشآت، مع حلول عملية وتشطيبات تناسب احتياجات كل مشروع في الرياض."
+            paragraph: "أبواب وبوابات وهياكل حديدية بتشطيبات متقنة"
         },
 
         {
             imageName: "hero-2.jpeg",
             eyebrow: "مظلات السيارات",
             h1: ["مظلات", "متينة", "بتصاميم عملية"],
-            paragraph: "تنفيذ مظلات السيارات والمواقف والمساحات الخارجية بهياكل متينة وتصاميم عملية تناسب مختلف الاستخدامات."
+            paragraph: "مظلات للمواقف والمساحات الخارجية بهياكل قوية"
         },
 
         {
             imageName: "hero-3.jpeg",
             eyebrow: "السواتر والخصوصية",
             h1: ["خصوصية", "وحماية", "بجودة عالية"],
-            paragraph: "تصميم وتنفيذ السواتر بمقاسات وخامات متعددة لتوفير الخصوصية والحماية للمنازل والفلل والمنشآت."
+            paragraph: "سواتر توفر الخصوصية والحماية بمقاسات دقيقة"
         },
 
         {
             imageName: "hero-4.jpeg",
             eyebrow: "السندوتش بانل",
             h1: ["حلول", "عملية", "للمشاريع"],
-            paragraph: "تنفيذ وتركيب السندوتش بانل للمستودعات والغرف والمرافق والمنشآت بتصاميم عملية تناسب الاستخدامات المختلفة."
+            paragraph: "سندوتش بانل للمستودعات والغرف والمنشآت"
         },
 
         {
             imageName: "hero-5.jpeg",
             eyebrow: "الزجاج السيكوريت",
             h1: ["زجاج", "سيكوريت", "بتنفيذ احترافي"],
-            paragraph: "تنفيذ وتركيب الزجاج السيكوريت للأبواب والواجهات والفواصل والمساحات الداخلية والخارجية."
+            paragraph: "زجاج سيكوريت للأبواب والواجهات والفواصل"
         }
 
     ];
 
 
+    /* HERO-FANCY:START */
     function renderHero(item) {
 
         heroContent.classList.remove("hero-animate");
@@ -70,36 +71,25 @@ document.addEventListener("DOMContentLoaded", () => {
         void heroContent.offsetWidth;
 
         heroContent.innerHTML = `
-
-            <div class="hero-eyebrow">
-                ${item.eyebrow}
-            </div>
-
             <h1 class="hero-title">
                 <span>${item.h1[0]}</span>
                 <span>${item.h1[1]}</span>
                 <strong>${item.h1[2]}</strong>
             </h1>
 
-            <p class="hero-description">
-                ${item.paragraph}
-            </p>
+            <p class="hero-description">${item.paragraph}</p>
 
             <div class="hero-buttons">
-
-                <a href="#contact" class="primary-btn">
-                    اطلب عرض سعر
+                <a href="tel:0534107471" class="hero-call">
+                    <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg></i>
+                    <span>اتصل بنا</span>
                 </a>
-
-                <a href="tel:0534107471" class="secondary-btn">
-                    اتصل بنا
-                </a>
-
             </div>
         `;
 
         heroContent.classList.add("hero-animate");
     }
+    /* HERO-FANCY:END */
 
 
     function changeHero(index) {
@@ -134,18 +124,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     changeHero(currentSlide);
 
+        /* HERO-ARROWS:START */
+        let heroTimer;
 
-    setInterval(() => {
-
-        currentSlide++;
-
-        if (currentSlide >= content.length) {
-            currentSlide = 0;
+        function restartHero() {
+            clearInterval(heroTimer);
+            heroTimer = setInterval(() => {
+                currentSlide = (currentSlide + 1) % content.length;
+                changeHero(currentSlide);
+            }, 5000);
         }
 
-        changeHero(currentSlide);
+        const heroPrev = home.querySelector("#heroPrev");
+        const heroNext = home.querySelector("#heroNext");
 
-    }, 5000);
+        if (heroPrev) {
+            heroPrev.addEventListener("click", () => {
+                currentSlide = (currentSlide - 1 + content.length) % content.length;
+                changeHero(currentSlide);
+                restartHero();
+            });
+        }
+
+        if (heroNext) {
+            heroNext.addEventListener("click", () => {
+                currentSlide = (currentSlide + 1) % content.length;
+                changeHero(currentSlide);
+                restartHero();
+            });
+        }
+        /* HERO-ARROWS:END */
+
+
+    restartHero();
 
 
     /* Timeline click */
