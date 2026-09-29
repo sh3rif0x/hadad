@@ -317,3 +317,87 @@
     .header-logo img { max-width: 135px; }
     .main-nav { top: 70px; right: 10px; left: 10px; }
 }
+
+/* AREAS:START */
+/* ===== مناطق الخدمة ===== */
+.nav-item.has-dropdown { position: relative; }
+.dropdown-arrow { font-size: 14px; margin-inline-start: 4px; }
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    right: 50%;
+    z-index: 200;
+    width: min(980px, 92vw);
+    max-height: 70vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    text-align: right;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(50%) translateY(12px);
+    transition: .25s ease;
+}
+
+.nav-item.has-dropdown:hover > .dropdown,
+.nav-item.has-dropdown:focus-within > .dropdown,
+.nav-item.has-dropdown.open > .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(50%) translateY(0);
+}
+
+.dropdown-col strong {
+    display: block;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    color: var(--color-primary);
+    font-size: 15px;
+    font-weight: 900;
+    border-bottom: 2px solid var(--color-primary-light);
+}
+
+.dropdown-col ul { display: flex; flex-direction: column; gap: 2px; }
+
+.dropdown-col a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: .2s;
+}
+
+.dropdown-col a:hover {
+    color: var(--color-primary);
+    background: var(--color-blue-100);
+    padding-inline-start: 14px;
+}
+
+@media (max-width: 1100px) { .dropdown { grid-template-columns: repeat(3, 1fr); } }
+
+@media (max-width: 900px) {
+    .dropdown {
+        position: static;
+        width: 100%;
+        max-height: none;
+        display: none;
+        grid-template-columns: repeat(2, 1fr);
+        padding: 16px;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+    .nav-item.has-dropdown:hover > .dropdown { display: none; }
+    .nav-item.has-dropdown.open > .dropdown { display: grid; transform: none; }
+}
+/* AREAS:END */

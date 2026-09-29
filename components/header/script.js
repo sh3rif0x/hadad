@@ -58,3 +58,13 @@ export function initHeader() {
         }
     });
 }
+
+/* AREAS:START */
+document.addEventListener("click", (e) => {
+    const link = e.target.closest(".nav-item.has-dropdown > a");
+    if (link && window.innerWidth <= 900) {
+        e.preventDefault();
+        link.parentElement.classList.toggle("open");
+    }
+});
+/* AREAS:END */
