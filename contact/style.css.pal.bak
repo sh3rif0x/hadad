@@ -21,7 +21,7 @@
     padding-top: 150px;
     padding-bottom: 130px;
     background:
-        linear-gradient(rgba(27, 38, 69, .78), rgba(27, 38, 69, .92)),
+        linear-gradient(rgba(18, 56, 75, .78), rgba(18, 56, 75, .92)),
         url("/assets/banner.png") center / cover no-repeat;
 }
 

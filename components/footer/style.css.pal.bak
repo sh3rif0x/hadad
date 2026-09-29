@@ -4,7 +4,7 @@
 
 .site-footer {
     padding: 85px clamp(24px, 8vw, 140px) 25px;
-    background: #0f1530;
+    background: #040b11;
     color: #ffffff;
 }
 
@@ -90,7 +90,7 @@
 }
 
 .footer-links a:hover {
-    color: #dd9a3b;
+    color: #d0a444;
     transform: translateX(-4px);
 }
 
@@ -120,7 +120,7 @@ a.footer-contact-item {
 }
 
 a.footer-contact-item:hover {
-    color: #dd9a3b;
+    color: #d0a444;
 }
 
 .footer-contact-label {
@@ -129,7 +129,7 @@ a.footer-contact-item:hover {
 }
 
 .footer-contact-item strong {
-    color: #dd9a3b;
+    color: #d0a444;
     font-size: 18px;
     font-weight: 800;
 }

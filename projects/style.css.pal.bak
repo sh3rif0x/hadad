@@ -9,7 +9,7 @@
     align-items: flex-end;
     padding: 150px clamp(24px, 8vw, 140px) 90px;
     overflow: hidden;
-    background: linear-gradient( rgba(27, 38, 69, 0.72), rgba(27, 38, 69, 0.88)), url("../assets/banner.png") center / cover no-repeat;
+    background: linear-gradient( rgba(18, 56, 75, 0.72), rgba(18, 56, 75, 0.88)), url("../assets/banner.png") center / cover no-repeat;
 }
 
 .projects-hero-content {
@@ -19,7 +19,7 @@
 .projects-eyebrow {
     display: inline-block;
     margin-bottom: 22px;
-    color: #f2c98a;
+    color: #b9e8f7;
     font-size: 15px;
     font-weight: 800;
 }
@@ -34,7 +34,7 @@
 
 .projects-hero h1 strong {
     display: block;
-    color: #f2c98a;
+    color: #aee4f5;
 }
 
 .projects-hero-content p {
@@ -190,7 +190,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient( to top, rgba(20, 28, 54, 0.55), transparent 55%);
+    background: linear-gradient( to top, rgba(10, 35, 47, 0.55), transparent 55%);
     opacity: 0;
     transition: opacity 0.35s ease;
 }
@@ -211,7 +211,7 @@
     z-index: 2;
     padding: 7px 13px;
     border-radius: 20px;
-    background: rgba(27, 38, 69, 0.88);
+    background: rgba(18, 56, 75, 0.88);
     color: #ffffff;
     font-size: 12px;
     font-weight: 800;
@@ -276,7 +276,7 @@
 }
 
 .projects-cta-content>span {
-    color: #f2c98a;
+    color: #aee4f5;
     font-size: 15px;
     font-weight: 800;
 }
@@ -289,7 +289,7 @@
 }
 
 .projects-cta h2 strong {
-    color: #f2c98a;
+    color: #aee4f5;
 }
 
 .projects-cta p {

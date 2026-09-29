@@ -11,7 +11,7 @@
         clamp(22px, 6vw, 100px)
         100px;
 
-    background: #faf9f6;
+    background: #f5fbfd;
 }
 
 
@@ -32,7 +32,7 @@
 
     margin-bottom: 14px;
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 15px;
 
@@ -44,7 +44,7 @@
 
     margin: 0 0 18px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size:
         clamp(42px, 6vw, 76px);
@@ -61,7 +61,7 @@
 
     margin: 0 auto;
 
-    color: #8a92a3;
+    color: #7893a0;
 
     font-size: 18px;
 
@@ -105,7 +105,7 @@
 
     border:
         1px solid
-        rgba(27, 38, 69, .10);
+        rgba(18, 56, 75, .10);
 
     border-radius: 24px;
 
@@ -115,7 +115,7 @@
 
     box-shadow:
         0 16px 45px
-        rgba(27, 38, 69, .08);
+        rgba(18, 56, 75, .08);
 
     transition:
         transform .3s ease,
@@ -130,7 +130,7 @@
 
     box-shadow:
         0 25px 60px
-        rgba(27, 38, 69, .14);
+        rgba(18, 56, 75, .14);
 }
 
 
@@ -140,7 +140,7 @@
 
     overflow: hidden;
 
-    background: #1b2645;
+    background: #12384b;
 }
 
 
@@ -178,7 +178,7 @@
 
     margin-bottom: 12px;
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 13px;
 
@@ -190,7 +190,7 @@
 
     margin: 0 0 12px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 25px;
 
@@ -204,7 +204,7 @@
 
     margin: 0 0 20px;
 
-    color: #8a92a3;
+    color: #7893a0;
 
     line-height: 1.8;
 }
@@ -212,7 +212,7 @@
 
 .service-card-link {
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-weight: 900;
 }
@@ -234,7 +234,7 @@
 
     overflow: hidden;
 
-    background: #1b2645;
+    background: #12384b;
 }
 
 
@@ -271,8 +271,8 @@
     background:
         linear-gradient(
             180deg,
-            rgba(20, 28, 54, .08),
-            rgba(20, 28, 54, .86)
+            rgba(7, 25, 35, .08),
+            rgba(7, 25, 35, .86)
         );
 }
 
@@ -301,7 +301,7 @@
 
     margin-bottom: 20px;
 
-    color: #f2c98a;
+    color: #aee4f5;
 
     font-size: 15px;
 
@@ -391,7 +391,7 @@
 
 .service-btn-primary {
 
-    background: #dd9a3b;
+    background: #176d91;
 
     color: #ffffff;
 }
@@ -401,7 +401,7 @@
 
     background: #ffffff;
 
-    color: #1b2645;
+    color: #12384b;
 }
 
 
@@ -415,7 +415,7 @@
         110px
         clamp(22px, 6vw, 100px);
 
-    background: #faf9f6;
+    background: #f5fbfd;
 }
 
 
@@ -461,11 +461,11 @@
 
     border-radius: 24px;
 
-    background: #1b2645;
+    background: #12384b;
 
     box-shadow:
         0 25px 60px
-        rgba(27, 38, 69, .13);
+        rgba(18, 56, 75, .13);
 }
 
 
@@ -497,7 +497,7 @@
 
 .service-sticky-caption span {
 
-    color: #8a92a3;
+    color: #7893a0;
 
     font-size: 13px;
 }
@@ -505,7 +505,7 @@
 
 .service-sticky-caption strong {
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 18px;
 }
@@ -519,7 +519,7 @@
 
     min-width: 0;
 
-    color: #1b2645;
+    color: #173f51;
 }
 
 
@@ -535,7 +535,7 @@
 
     margin-bottom: 15px;
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-weight: 900;
 }
@@ -545,7 +545,7 @@
 
     margin: 0 0 20px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size:
         clamp(34px, 4vw, 58px);
@@ -560,7 +560,7 @@
 
     margin: 0;
 
-    color: #8a92a3;
+    color: #7893a0;
 
     font-size: 19px;
 
@@ -585,13 +585,13 @@
 
     border-bottom:
         1px solid
-        rgba(27, 38, 69, .10);
+        rgba(18, 56, 75, .10);
 }
 
 
 .article-number {
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 15px;
 
@@ -603,7 +603,7 @@
 
     margin: 0 0 12px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 28px;
 
@@ -615,7 +615,7 @@
 
     margin: 0;
 
-    color: #8a92a3;
+    color: #7893a0;
 
     font-size: 17px;
 
@@ -641,7 +641,7 @@
 
 .faq-heading span {
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 14px;
 
@@ -653,7 +653,7 @@
 
     margin-top: 10px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 38px;
 
@@ -677,7 +677,7 @@
 
     border:
         1px solid
-        rgba(27, 38, 69, .10);
+        rgba(18, 56, 75, .10);
 
     border-radius: 16px;
 }
@@ -705,7 +705,7 @@
 
 .faq-item summary span {
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 13px;
 
@@ -715,7 +715,7 @@
 
 .faq-item summary strong {
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 17px;
 }
@@ -730,9 +730,9 @@
 
     border-top:
         1px solid
-        rgba(27, 38, 69, .08);
+        rgba(18, 56, 75, .08);
 
-    color: #8a92a3;
+    color: #7893a0;
 
     line-height: 2;
 }
@@ -756,7 +756,7 @@
 
     gap: 30px;
 
-    background: #1b2645;
+    background: #12384b;
 
     border-radius: 24px;
 }
@@ -764,7 +764,7 @@
 
 .article-cta span {
 
-    color: #f2c98a;
+    color: #aee4f5;
 
     font-size: 14px;
 
@@ -813,13 +813,13 @@
 
     padding: 100px 22px;
 
-    background: #faf9f6;
+    background: #f5fbfd;
 }
 
 
 .service-not-found span {
 
-    color: #dd9a3b;
+    color: #176d91;
 
     font-size: 80px;
 
@@ -832,7 +832,7 @@
     margin:
         10px 0 15px;
 
-    color: #1b2645;
+    color: #12384b;
 
     font-size: 42px;
 }
@@ -840,7 +840,7 @@
 
 .service-not-found p {
 
-    color: #8a92a3;
+    color: #7893a0;
 
     margin-bottom: 25px;
 }
@@ -860,7 +860,7 @@
 
     border-radius: 10px;
 
-    background: #dd9a3b;
+    background: #176d91;
 
     color: #ffffff;
 
