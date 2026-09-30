@@ -90,10 +90,30 @@
                 aria-label="الخدمات">
 
                 <a href="/services/iron-works/">
-                    جميع أعمال الحدادة
+                    أعمال الحدادة
                 </a>
 
-                <a href="/services/shades/">
+                <a href="/services/iron-gates/">
+                    البوابات الحديد
+                </a>
+
+                <a href="/services/iron-doors/">
+                    الأبواب الحديد
+                </a>
+
+                <a href="/services/iron-railings/">
+                    الدرابزين الحديد
+                </a>
+
+                <a href="/services/iron-fences/">
+                    الأسوار والسواتر
+                </a>
+
+                <a href="/services/iron-stairs/">
+                    السلالم الحديد
+                </a>
+
+                <a href="/services/car-shades/">
                     المظلات
                 </a>
 
@@ -101,12 +121,28 @@
                     السواتر
                 </a>
 
+                <a href="/services/steel-structures/">
+                    الهياكل الحديدية
+                </a>
+
+                <a href="/services/welding/">
+                    اللحام
+                </a>
+
                 <a href="/services/sandwich-panel/">
-                    الساندوتش بانل
+                    ساندوتش بانل
                 </a>
 
                 <a href="/services/tempered-glass/">
                     الزجاج السيكوريت
+                </a>
+
+                <a href="/services/facades/">
+                    الواجهات
+                </a>
+
+                <a href="/services/urgent/">
+                    خدمات طارئة
                 </a>
 
             </nav>
