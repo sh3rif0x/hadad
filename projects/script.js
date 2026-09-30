@@ -1,6 +1,7 @@
 import { initHeader } from "/components/header/script.js";
 
-var PAGE = 24;
+var PAGE = 12;
+var page = 1;
 var grid = document.querySelector("#projectsGrid");
 var filtersBox = document.querySelector("#projectsFilters");
 var all = [], list = [], shown = 0, cur = 0;
@@ -26,25 +27,66 @@ function cardHtml(p, i) {
     '</figure>';
 }
 
-function renderMore() {
-  var next = list.slice(shown, shown + PAGE);
-  var html = next.map(function (p, k) { return cardHtml(p, shown + k); }).join("");
-  grid.insertAdjacentHTML("beforeend", html);
-  shown += next.length;
-  grid.querySelectorAll(".pg-card img").forEach(function (img) {
-    if (img.__b) return;
-    img.__b = true;
-    img.addEventListener("error", function () { var c = img.closest(".pg-card"); if (c) c.remove(); }, { once: true });
-  });
-  var more = document.querySelector("#pgMore");
-  if (more) more.hidden = shown >= list.length;
+/* PG-PAGER */
+function pagesTotal() { return Math.max(1, Math.ceil(list.length / PAGE)); }
+
+function seq(total, p) {
+  var out = [], last = 0;
+  for (var i = 1; i <= total; i++) {
+    if (i === 1 || i === total || Math.abs(i - p) <= 2) {
+      if (last && i - last > 1) out.push("…");
+      out.push(i);
+      last = i;
+    }
+  }
+  return out;
 }
 
-function setFilter(g) {
+function renderPager() {
+  var box = document.querySelector("#pgPager");
+  if (!box) return;
+  var total = pagesTotal();
+  if (total <= 1) { box.innerHTML = ""; return; }
+  var R = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+  var L = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+  var h = '<div class="pgn-bar">';
+  h += '<button type="button" class="pgn-nav" aria-label="السابق" data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + '>' + R + '</button>';
+  seq(total, page).forEach(function (n) {
+    if (n === "…") h += '<span class="pgn-dots">···</span>';
+    else h += '<button type="button" class="pgn-num' + (n === page ? " on" : "") + '" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + '>' + n + '</button>';
+  });
+  h += '<button type="button" class="pgn-nav" aria-label="التالي" data-p="' + (page + 1) + '"' + (page === total ? " disabled" : "") + '>' + L + '</button>';
+  h += '</div><div class="pgn-info">صفحة ' + page + ' من ' + total + '<i></i>' + list.length + ' صورة</div>';
+  box.innerHTML = h;
+}
+
+function renderPage(scroll) {
+  var total = pagesTotal();
+  if (page > total) page = total;
+  if (page < 1) page = 1;
+  var start = (page - 1) * PAGE;
+  grid.classList.add("swap");
+  setTimeout(function () {
+    grid.innerHTML = list.slice(start, start + PAGE).map(function (p, k) { return cardHtml(p, start + k); }).join("");
+    grid.querySelectorAll(".pg-card img").forEach(function (img) {
+      img.addEventListener("error", function () { var c = img.closest(".pg-card"); if (c) c.remove(); }, { once: true });
+    });
+    grid.classList.remove("swap");
+    renderPager();
+    if (scroll) {
+      var top = document.querySelector(".projects-heading") || grid;
+      window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - 110, behavior: "smooth" });
+    }
+  }, scroll ? 220 : 0);
+  var u = new URL(location.href);
+  if (page > 1) u.searchParams.set("page", page); else u.searchParams.delete("page");
+  history.replaceState({}, "", u);
+}
+
+function setFilter(g, keep) {
   list = g === "الكل" ? all : all.filter(function (p) { return p.group === g; });
-  shown = 0;
-  grid.innerHTML = "";
-  renderMore();
+  if (!keep) page = 1;
+  renderPage(false);
 }
 
 function buildFilters() {
@@ -110,14 +152,20 @@ grid.addEventListener("click", function (e) {
     all = await r.json();
     var old = document.querySelector("#projectsPagination, .projects-pagination, .blog-pagination");
     if (old) old.remove();
-    var more = document.createElement("div");
-    more.id = "pgMore";
-    more.className = "pg-more";
-    more.innerHTML = '<button type="button">عرض المزيد</button>';
-    grid.insertAdjacentElement("afterend", more);
-    more.querySelector("button").addEventListener("click", renderMore);
+    var pager = document.createElement("nav");
+    pager.id = "pgPager";
+    pager.className = "pgn";
+    pager.setAttribute("aria-label", "تنقل الصفحات");
+    grid.insertAdjacentElement("afterend", pager);
+    pager.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-p]");
+      if (!b || b.disabled) return;
+      page = parseInt(b.getAttribute("data-p"), 10) || 1;
+      renderPage(true);
+    });
+    page = Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
     buildFilters();
-    setFilter("الكل");
+    setFilter("الكل", true);
   } catch (err) {
     console.error("Projects init failed:", err);
   }
