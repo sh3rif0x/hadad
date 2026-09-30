@@ -1,0 +1,246 @@
+/* Written without the ?? operator on purpose (formatters can break it) */
+
+const esc = value => {
+    if (value === null || value === undefined) value = "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
+const num = i => String(i + 1).padStart(2, "0");
+
+function imgPath(src) {
+    if (!src) return "";
+    if (src.startsWith("/")) return src;
+    if (/^https?:\/\//.test(src)) return src;
+    if (src.startsWith("../")) return "/" + src.replace(/^(\.\.\/)+/, "");
+    if (src.startsWith("./")) return "/" + src.substring(2);
+    return "/" + src;
+}
+
+function fmtDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d)) return String(iso);
+    try {
+        return d.toLocaleDateString("ar-EG", { year: "numeric", month: "long", day: "numeric" });
+    } catch (e) {
+        return String(iso);
+    }
+}
+
+/* if the blog image file is missing, show the logo instead of a broken icon */
+const FALLBACK = "this.onerror=null;this.src='/assets/logo.png'";
+
+function img(image, eager) {
+    const src = esc(imgPath(image && image.src));
+    const alt = esc(image && image.alt);
+    return `<img src="${src}" alt="${alt}" loading="${eager ? "eager" : "lazy"}" onerror="${FALLBACK}">`;
+}
+
+/* ---------- FILTERS ---------- */
+
+export function renderFilters(posts, active) {
+    const cats = [...new Set(posts.map(p => p.category).filter(Boolean))];
+    if (cats.length < 2) return "";
+
+    const btn = (value, label) => `
+        <button type="button"
+                class="blog-filter${active === value ? " is-active" : ""}"
+                data-category="${esc(value)}">${esc(label)}</button>`;
+
+    return [btn("all", "الكل"), ...cats.map(c => btn(c, c))].join("");
+}
+
+/* ---------- CARDS / LIST ---------- */
+
+function card(post, index) {
+    const slug = encodeURIComponent(post.slug || "");
+
+    return `
+        <a class="blog-card" href="/blog/${slug}/">
+            <div class="blog-card-image">
+                ${img(post.image, index < 3)}
+            </div>
+            <div class="blog-card-content">
+                <div class="blog-card-meta">
+                    <span class="blog-card-category">${esc(post.category)}</span>
+                    <span>${esc(post.readingTime)}</span>
+                </div>
+                <h2>${esc(post.title)}</h2>
+                <p>${esc(post.excerpt)}</p>
+                <span class="blog-card-link">قراءة المقال ←</span>
+            </div>
+        </a>
+    `;
+}
+
+export function renderList(posts) {
+    if (!posts.length) {
+        return `<p class="blog-empty">لا توجد مقالات في هذا التصنيف حاليا.</p>`;
+    }
+    return posts.map(card).join("");
+}
+
+/* ---------- POST ---------- */
+
+export function renderPost(post, related, site) {
+    site = site || {};
+    related = related || [];
+
+    const content = Array.isArray(post.content) ? post.content : [];
+    const faq = Array.isArray(post.faq) ? post.faq : [];
+
+    const phone = esc(site.phone || "0534107471");
+    const whatsapp = esc(site.whatsapp || "https://wa.me/966534107471");
+    const ctaText = (post.cta && post.cta.text) || "تواصل معنا الآن واحصل على معاينة وسعر مناسب.";
+
+    const tocHtml = content.length ? `
+        <nav class="blog-toc" aria-label="محتوى المقال">
+            <strong>محتوى المقال</strong>
+            <ol>
+                ${content.map((s, i) => `
+                    <li><a href="#section-${i + 1}">${esc(s.heading)}</a></li>
+                `).join("")}
+            </ol>
+        </nav>
+    ` : "";
+
+    const sectionsHtml = content.map((s, i) => {
+        const paragraphs = (Array.isArray(s.paragraphs) ? s.paragraphs : [])
+            .map(p => `<p>${esc(p)}</p>`).join("");
+
+        const list = Array.isArray(s.list) && s.list.length
+            ? `<ul>${s.list.map(li => `<li>${esc(li)}</li>`).join("")}</ul>`
+            : "";
+
+        return `
+            <section class="blog-section" id="section-${i + 1}">
+                <h2><span>${num(i)}</span>${esc(s.heading)}</h2>
+                ${paragraphs}
+                ${list}
+            </section>
+        `;
+    }).join("");
+
+    const faqHtml = faq.length ? `
+        <section class="blog-faq">
+            <h2>الأسئلة الشائعة</h2>
+            ${faq.map(f => `
+                <details class="blog-faq-item">
+                    <summary>${esc(f.q)}</summary>
+                    <p>${esc(f.a)}</p>
+                </details>
+            `).join("")}
+        </section>
+    ` : "";
+
+    const relatedHtml = related.length ? `
+        <section class="blog-related">
+            <h2>مقالات ذات صلة</h2>
+            <div class="blog-grid">
+                ${related.map(card).join("")}
+            </div>
+        </section>
+    ` : "";
+
+    return `
+        <header class="blog-post-hero">
+            <div class="blog-post-hero-image">
+                ${img(post.image, true)}
+            </div>
+            <div class="blog-post-hero-overlay"></div>
+
+            <div class="blog-post-hero-content">
+                <nav class="blog-breadcrumb" aria-label="breadcrumb">
+                    <a href="/">الرئيسية</a>
+                    <span>/</span>
+                    <a href="/blog/">المدونة</a>
+                    <span>/</span>
+                    <strong>${esc(post.category)}</strong>
+                </nav>
+
+                <span class="blog-post-category">${esc(post.category)}</span>
+                <h1>${esc(post.title)}</h1>
+
+                <div class="blog-post-meta">
+                    <span>${esc(fmtDate(post.publishedAt))}</span>
+                    <span>•</span>
+                    <span>${esc(post.readingTime)}</span>
+                    <span>•</span>
+                    <span>${esc(site.name || "حداد الرياض")}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="blog-post-layout">
+
+            <aside class="blog-post-aside">
+                ${tocHtml}
+            </aside>
+
+            <article class="blog-post-body">
+                <p class="blog-post-excerpt">${esc(post.excerpt)}</p>
+
+                ${sectionsHtml}
+                ${faqHtml}
+
+                <section class="blog-cta">
+                    <h2>${esc(ctaText)}</h2>
+                    <div class="blog-cta-buttons">
+                        <a href="tel:${phone}" class="blog-btn blog-btn-primary">اتصل بنا</a>
+                        <a href="${whatsapp}" target="_blank" rel="noopener"
+                           class="blog-btn blog-btn-secondary">مراسلتنا</a>
+                    </div>
+                </section>
+            </article>
+
+        </div>
+
+        ${relatedHtml}
+    `;
+}
+
+/* ---------- 404 ---------- */
+
+export function renderNotFound() {
+    return `
+        <span>404</span>
+        <h1>المقال غير موجود</h1>
+        <p>المقال المطلوب غير موجود أو تم نقله.</p>
+        <a href="/blog/">العودة إلى المدونة</a>
+    `;
+}
+
+/* PAGINATION:START */
+export function renderPagination(total, page, perPage) {
+    var pages = Math.ceil(total / perPage);
+    if (pages <= 1) return "";
+
+    var seq = [];
+    for (var i = 1; i <= pages; i++) {
+        if (i === 1 || i === pages || Math.abs(i - page) <= 1) seq.push(i);
+        else if (seq[seq.length - 1] !== "...") seq.push("...");
+    }
+
+    var out = '<button type="button" class="pg-btn pg-nav" data-page="' + (page - 1) + '"' +
+        (page === 1 ? " disabled" : "") + '>→ السابق</button>';
+
+    seq.forEach(function (p) {
+        if (p === "...") {
+            out += '<span class="pg-dots">…</span>';
+        } else {
+            out += '<button type="button" class="pg-btn' + (p === page ? " is-active" : "") + '" data-page="' + p + '"' +
+                (p === page ? ' aria-current="page"' : "") + ">" + p + "</button>";
+        }
+    });
+
+    out += '<button type="button" class="pg-btn pg-nav" data-page="' + (page + 1) + '"' +
+        (page === pages ? " disabled" : "") + '>التالي ←</button>';
+
+    return out;
+}
+/* PAGINATION:END */
