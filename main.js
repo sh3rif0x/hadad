@@ -26,35 +26,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = [
 
         {
-            imageName: "hero-1.jpeg",
+            imageName: "hero-1.webp",
             eyebrow: "حداد الرياض",
             h1: ["أعمال", "الحدادة", "باحترافية"],
             paragraph: "أبواب وبوابات وهياكل حديدية بتشطيبات متقنة"
         },
 
         {
-            imageName: "hero-2.jpeg",
+            imageName: "hero-2.webp",
             eyebrow: "مظلات السيارات",
             h1: ["مظلات", "متينة", "بتصاميم عملية"],
             paragraph: "مظلات للمواقف والمساحات الخارجية بهياكل قوية"
         },
 
         {
-            imageName: "hero-3.jpeg",
+            imageName: "hero-3.webp",
             eyebrow: "السواتر والخصوصية",
             h1: ["خصوصية", "وحماية", "بجودة عالية"],
             paragraph: "سواتر توفر الخصوصية والحماية بمقاسات دقيقة"
         },
 
         {
-            imageName: "hero-4.jpeg",
+            imageName: "hero-4.webp",
             eyebrow: "السندوتش بانل",
             h1: ["حلول", "عملية", "للمشاريع"],
             paragraph: "سندوتش بانل للمستودعات والغرف والمنشآت"
         },
 
         {
-            imageName: "hero-5.jpeg",
+            imageName: "hero-5.webp",
             eyebrow: "الزجاج السيكوريت",
             h1: ["زجاج", "سيكوريت", "بتنفيذ احترافي"],
             paragraph: "زجاج سيكوريت للأبواب والواجهات والفواصل"
@@ -124,36 +124,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     changeHero(currentSlide);
 
-        /* HERO-ARROWS:START */
-        let heroTimer;
+    /* HERO-ARROWS:START */
+    let heroTimer;
 
-        function restartHero() {
-            clearInterval(heroTimer);
-            heroTimer = setInterval(() => {
-                currentSlide = (currentSlide + 1) % content.length;
-                changeHero(currentSlide);
-            }, 5000);
-        }
+    function restartHero() {
+        clearInterval(heroTimer);
+        heroTimer = setInterval(() => {
+            currentSlide = (currentSlide + 1) % content.length;
+            changeHero(currentSlide);
+        }, 5000);
+    }
 
-        const heroPrev = home.querySelector("#heroPrev");
-        const heroNext = home.querySelector("#heroNext");
+    const heroPrev = home.querySelector("#heroPrev");
+    const heroNext = home.querySelector("#heroNext");
 
-        if (heroPrev) {
-            heroPrev.addEventListener("click", () => {
-                currentSlide = (currentSlide - 1 + content.length) % content.length;
-                changeHero(currentSlide);
-                restartHero();
-            });
-        }
+    if (heroPrev) {
+        heroPrev.addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + content.length) % content.length;
+            changeHero(currentSlide);
+            restartHero();
+        });
+    }
 
-        if (heroNext) {
-            heroNext.addEventListener("click", () => {
-                currentSlide = (currentSlide + 1) % content.length;
-                changeHero(currentSlide);
-                restartHero();
-            });
-        }
-        /* HERO-ARROWS:END */
+    if (heroNext) {
+        heroNext.addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % content.length;
+            changeHero(currentSlide);
+            restartHero();
+        });
+    }
+    /* HERO-ARROWS:END */
 
 
     restartHero();
@@ -228,16 +228,20 @@ if (scrollTopButton) {
 updateScrollTopButton();
 
 /* BLOGS:START */
-(function () {
+(function() {
 
     const BLOGS_DATA = "./data/blog.json";
     const BLOGS_LIMIT = 6;
     const BLOGS_ARTICLE_URL = "/blog/";
-    const BLOGS_FALLBACK_IMAGES = ["hero-1.jpeg", "hero-2.jpeg", "hero-3.jpeg", "hero-4.jpeg", "hero-5.jpeg"];
+    const BLOGS_FALLBACK_IMAGES = ["hero-1.webp", "hero-2.webp", "hero-3.webp", "hero-4.webp", "hero-5.webp"];
 
     const escapeHTML = (value) =>
         String(value == null ? "" : value).replace(/[&<>"']/g, (c) => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
         }[c]));
 
     function blogCard(post) {
@@ -340,7 +344,7 @@ function setHeroImage(name) {
 /* CINEMATIC:END */
 
 /* STORY:START */
-(function () {
+(function() {
 
     function init() {
         var root = document.getElementById("story");
@@ -369,12 +373,12 @@ function setHeroImage(name) {
             track.style.transform = "translateY(" + (-i * 100 / N) + "%)";
             list.style.setProperty("--p", ((i + 1) / N).toFixed(4));
 
-            items.forEach(function (el, k) {
+            items.forEach(function(el, k) {
                 el.classList.toggle("on", k === i);
                 el.setAttribute("aria-selected", k === i ? "true" : "false");
             });
-            slides.forEach(function (el, k) { el.classList.toggle("on", k === i); });
-            dots.forEach(function (el, k) { el.classList.toggle("on", k === i); });
+            slides.forEach(function(el, k) { el.classList.toggle("on", k === i); });
+            dots.forEach(function(el, k) { el.classList.toggle("on", k === i); });
 
             capT.textContent = items[i].getAttribute("data-ct");
             capD.textContent = items[i].getAttribute("data-cd");
@@ -385,22 +389,22 @@ function setHeroImage(name) {
             if (!first) root.classList.add("moved");
         }
 
-        items.forEach(function (el, k) {
-            el.addEventListener("mouseenter", function () { set(k); });
-            el.addEventListener("focus", function () { set(k); });
-            el.addEventListener("click", function () { set(k); });
+        items.forEach(function(el, k) {
+            el.addEventListener("mouseenter", function() { set(k); });
+            el.addEventListener("focus", function() { set(k); });
+            el.addEventListener("click", function() { set(k); });
         });
-        dots.forEach(function (el, k) {
-            el.addEventListener("mouseenter", function () { set(k); });
-            el.addEventListener("click", function () { set(k); });
+        dots.forEach(function(el, k) {
+            el.addEventListener("mouseenter", function() { set(k); });
+            el.addEventListener("click", function() { set(k); });
         });
-        root.querySelector(".lx-prev").addEventListener("click", function () { set(cur - 1); });
-        root.querySelector(".lx-next").addEventListener("click", function () { set(cur + 1); });
+        root.querySelector(".lx-prev").addEventListener("click", function() { set(cur - 1); });
+        root.querySelector(".lx-next").addEventListener("click", function() { set(cur + 1); });
 
         /* سحب بالإصبع على الموبايل */
         var y0 = 0;
-        visual.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
-        visual.addEventListener("touchend", function (e) {
+        visual.addEventListener("touchstart", function(e) { y0 = e.touches[0].clientY; }, { passive: true });
+        visual.addEventListener("touchend", function(e) {
             var d = y0 - e.changedTouches[0].clientY;
             if (Math.abs(d) < 45) return;
             set(cur + (d > 0 ? 1 : -1));
@@ -442,7 +446,7 @@ function setHeroImage(name) {
 /* FOOTER-LOAD:END */
 
 /* FAQ:START */
-(function () {
+(function() {
     function initFaq() {
         var items = document.querySelectorAll(".faq-item");
         if (!items.length) return;
@@ -455,11 +459,11 @@ function setHeroImage(name) {
 
         var current = document.querySelector(".faq-item.is-open");
 
-        items.forEach(function (item) {
+        items.forEach(function(item) {
             var btn = item.querySelector(".faq-question");
             if (!btn) return;
 
-            btn.addEventListener("click", function () {
+            btn.addEventListener("click", function() {
                 if (current && current !== item) setOpen(current, false);
                 var willOpen = !item.classList.contains("is-open");
                 setOpen(item, willOpen);
