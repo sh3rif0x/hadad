@@ -80,9 +80,6 @@
             <div class="projects-grid" id="projectsGrid">
             </div>
 
-            <!-- PAGINATION -->
-            <nav id="projectsPagination" class="projects-pagination" aria-label="تنقل الصفحات"></nav>
-
         </section>
 
 

@@ -1,4 +1,3 @@
-cat > add-pagination.js <<'EOF'
 #!/usr/bin/env node
 // Run from the blog dir:  node add-pagination.js
 // Change the page size here (or edit PER_PAGE in script.js later):
@@ -192,5 +191,3 @@ inject(f("style.css"), "/* PAGINATION:START */", "/* PAGINATION:END */", `
 
 console.log("✔ pagination added (" + PER_PAGE + " posts per page)");
 console.log("  Hard refresh: Ctrl+Shift+R.  Backups: *.pag.bak");
-EOF
-node add-pagination.js

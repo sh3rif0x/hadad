@@ -392,63 +392,43 @@
 
 
         <!-- PROJECTS -->
-<!-- PROJECTS-GALLERY:START -->
-        <section class="gl section" id="projects">
+        <section class="projects section" id="projects">
 
-            <div class="gl-head">
+            <div class="section-heading">
                 <span>أعمالنا</span>
+
                 <h2>
                     مشاريع
                     <strong>نفذناها</strong>
                 </h2>
             </div>
 
-            <div class="gl-grid" id="glGrid">
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/hero-1.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/hero-3.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/hero-2.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/hero-4.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/hero-5.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D8%B3%D8%A7%D8%AA%D8%B1-%D8%AD%D8%AF%D9%8A%D8%AF-%D8%AE%D8%A7%D8%B1%D8%AC%D9%8A-%D8%A7%D9%81%D9%82%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D8%B3%D9%8A%D8%A7%D8%AC-%D8%AE%D8%A7%D8%B1%D8%AC%D9%8A-%D8%AD%D8%AF%D9%8A%D8%AB-%D8%A7%D9%81%D9%82%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D8%BA%D8%B1%D9%81%D8%A9-%D8%B2%D8%AC%D8%A7%D8%AC%D9%8A%D8%A9-%D8%AD%D8%AF%D9%8A%D9%82%D8%A9-2-%D8%B9%D9%85%D9%88%D8%AF%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D8%BA%D8%B1%D9%81%D8%A9-%D8%B2%D8%AC%D8%A7%D8%AC%D9%8A%D8%A9-%D9%88%D8%A7%D8%AC%D9%87%D8%A9-%D8%B9%D9%85%D9%88%D8%AF%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D9%85%D8%B8%D9%84%D8%A9-%D9%85%D8%AF%D8%AE%D9%84-%D8%AD%D8%AF%D9%8A%D8%AB%D8%A9-%D8%A7%D9%81%D9%82%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
-                <button type="button" class="gl-item" aria-label="عرض الصورة">
-                    <img src="./assets/%D9%88%D8%A7%D8%AC%D9%87%D8%A9-%D9%85%D9%86%D8%B2%D9%84-%D8%AD%D8%AF%D9%8A%D8%AB%D8%A9-%D8%A7%D9%81%D9%82%D9%8A.webp" alt="من أعمالنا" loading="lazy" decoding="async" onerror="this.closest('.gl-item').remove()">
-                </button>
+
+            <div class="projects-grid">
+
+                <article class="project-card">
+                    <img src="./assets/image-1790545454628.jpg" alt="أعمال حدادة">
+                    <h3>أعمال حدادة</h3>
+                </article>
+
+                <article class="project-card">
+                    <img src="./assets/Sliding-French-Glass-Doors.webp" alt="مظلات سيارات">
+                    <h3>مظلات سيارات</h3>
+                </article>
+
+                <article class="project-card">
+                    <img src="./assets/hero-4.jpg" alt="سواتر">
+                    <h3>سواتر</h3>
+                </article>
+
+                <article class="project-card">
+                    <img src="./assets/hero-2.webp" alt="سندوتش بانل">
+                    <h3>سندوتش بانل</h3>
+                </article>
+
             </div>
 
         </section>
-
-        <div class="gl-box" id="glBox" hidden>
-            <button type="button" class="gl-x" id="glX" aria-label="إغلاق">&times;</button>
-            <button type="button" class="gl-nav gl-p" id="glP" aria-label="السابق"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-            <img id="glImg" alt="">
-            <button type="button" class="gl-nav gl-n" id="glN" aria-label="التالي"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-            <span class="gl-c" id="glC"></span>
-        </div>
-<!-- PROJECTS-GALLERY:END -->
 
 
         <!-- BLOGS:START -->
@@ -728,44 +708,6 @@
 })();
 </script>
 <!-- ICONS:END -->
-<!-- PROJECTS-GALLERY-JS:START -->
-<script>
-(function () {
-  var grid = document.getElementById("glGrid"), box = document.getElementById("glBox");
-  if (!grid || !box) return;
-  var img = document.getElementById("glImg"), cnt = document.getElementById("glC"), i = 0;
-  function list() { return [].slice.call(grid.querySelectorAll("img")); }
-  function show(n) {
-    var l = list(); if (!l.length) return;
-    i = (n + l.length) % l.length;
-    img.src = l[i].src;
-    cnt.textContent = (i + 1) + " / " + l.length;
-  }
-  function open(n) { box.hidden = false; document.body.style.overflow = "hidden"; show(n); }
-  function close() { box.hidden = true; document.body.style.overflow = ""; img.src = ""; }
-  grid.addEventListener("click", function (e) {
-    var b = e.target.closest(".gl-item"); if (!b) return;
-    open(list().indexOf(b.querySelector("img")));
-  });
-  document.getElementById("glX").onclick = close;
-  document.getElementById("glP").onclick = function () { show(i - 1); };
-  document.getElementById("glN").onclick = function () { show(i + 1); };
-  box.addEventListener("click", function (e) { if (e.target === box) close(); });
-  document.addEventListener("keydown", function (e) {
-    if (box.hidden) return;
-    if (e.key === "Escape") close();
-    if (e.key === "ArrowRight") show(i - 1);
-    if (e.key === "ArrowLeft") show(i + 1);
-  });
-  var sx = 0;
-  box.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
-  box.addEventListener("touchend", function (e) {
-    var dx = e.changedTouches[0].clientX - sx;
-    if (Math.abs(dx) > 50) show(dx > 0 ? i - 1 : i + 1);
-  });
-})();
-</script>
-<!-- PROJECTS-GALLERY-JS:END -->
 </body>
 
 </html>

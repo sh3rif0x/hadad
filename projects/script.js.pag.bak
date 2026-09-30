@@ -74,112 +74,79 @@ function renderFilters(categories) {
    RENDER PROJECTS
 ========================================================= */
 
-/* PROJECTS-PAGINATION:START */
-const PER_PAGE = 9;
-const projectsPagination = document.querySelector("#projectsPagination");
-let allProjects = [];
-let currentCategory = "الكل";
-let currentPage = Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
+function renderProjects(
+    projects,
+    category = "الكل"
+) {
 
-function setPageUrl(push) {
-    const u = new URL(location.href);
-    if (currentPage > 1) u.searchParams.set("page", currentPage);
-    else u.searchParams.delete("page");
-    history[push ? "pushState" : "replaceState"]({}, "", u);
-}
+    const filteredProjects =
+        category === "الكل" ?
+        projects :
+        projects.filter(
+            project =>
+            project.category === category
+        );
 
-function paginationHtml(total, page, perPage) {
-    const pages = Math.ceil(total / perPage);
-    if (pages <= 1) return "";
 
-    const seq = [];
-    for (let i = 1; i <= pages; i++) {
-        if (i === 1 || i === pages || Math.abs(i - page) <= 1) seq.push(i);
-        else if (seq[seq.length - 1] !== "...") seq.push("...");
-    }
+    if (!filteredProjects.length) {
 
-    let out = '<button type="button" class="pg-btn pg-nav" data-page="' + (page - 1) + '"' +
-        (page === 1 ? " disabled" : "") + '>→ السابق</button>';
+        projectsGrid.innerHTML = `
+            <div class="projects-empty">
+                لا توجد مشاريع في هذا التصنيف.
+            </div>
+        `;
 
-    seq.forEach(function (p) {
-        if (p === "...") {
-            out += '<span class="pg-dots">…</span>';
-        } else {
-            out += '<button type="button" class="pg-btn' + (p === page ? " is-active" : "") + '" data-page="' + p + '"' +
-                (p === page ? ' aria-current="page"' : "") + ">" + p + "</button>";
-        }
-    });
-
-    out += '<button type="button" class="pg-btn pg-nav" data-page="' + (page + 1) + '"' +
-        (page === pages ? " disabled" : "") + '>التالي ←</button>';
-
-    return out;
-}
-
-function renderProjects(projects, category = "الكل") {
-
-    allProjects = projects;
-
-    if (category !== currentCategory) {
-        currentCategory = category;
-        currentPage = 1;
-        setPageUrl(false);
-    }
-
-    const filtered = category === "الكل"
-        ? projects
-        : projects.filter(project => project.category === category);
-
-    if (!filtered.length) {
-        projectsGrid.innerHTML = '<div class="projects-empty">لا توجد مشاريع في هذا التصنيف.</div>';
-        if (projectsPagination) projectsPagination.innerHTML = "";
         return;
     }
 
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-    if (currentPage > totalPages) { currentPage = totalPages; setPageUrl(false); }
 
-    const start = (currentPage - 1) * PER_PAGE;
-    const pageItems = filtered.slice(start, start + PER_PAGE);
+    projectsGrid.innerHTML =
+        filteredProjects
+        .map((project, index) => {
 
-    projectsGrid.innerHTML = pageItems.map(function (project, index) {
-        const number = String(start + index + 1).padStart(2, "0");
+            const number =
+                String(index + 1).padStart(2, "0");
 
-        return '<article class="project-card">' +
-            '<div class="project-card-image">' +
-            '<img src="' + project.image + '" alt="' + project.title + '" loading="lazy">' +
-            '<span class="project-category">' + project.category + '</span>' +
-            '</div>' +
-            '<div class="project-card-content">' +
-            '<span class="project-number">' + number + '</span>' +
-            '<h3>' + project.title + '</h3>' +
-            '<p>' + project.description + '</p>' +
-            '</div>' +
-            '</article>';
-    }).join("");
 
-    if (projectsPagination) {
-        projectsPagination.innerHTML = paginationHtml(filtered.length, currentPage, PER_PAGE);
-    }
+            return `
+                    <article class="project-card">
+
+                        <div class="project-card-image">
+
+                            <img
+                                src="${project.image}"
+                                alt="${project.title}"
+                                loading="lazy">
+
+                            <span class="project-category">
+                                ${project.category}
+                            </span>
+
+                        </div>
+
+
+                        <div class="project-card-content">
+
+                            <span class="project-number">
+                                ${number}
+                            </span>
+
+                            <h3>
+                                ${project.title}
+                            </h3>
+
+                            <p>
+                                ${project.description}
+                            </p>
+
+                        </div>
+
+                    </article>
+                `;
+
+        })
+        .join("");
 }
-
-if (projectsPagination) {
-    projectsPagination.addEventListener("click", function (e) {
-        const btn = e.target.closest("[data-page]");
-        if (!btn || btn.disabled) return;
-        currentPage = parseInt(btn.getAttribute("data-page"), 10) || 1;
-        setPageUrl(true);
-        renderProjects(allProjects, currentCategory);
-        const top = document.querySelector(".projects-page");
-        if (top) top.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-}
-
-window.addEventListener("popstate", function () {
-    currentPage = Math.max(1, parseInt(new URLSearchParams(location.search).get("page"), 10) || 1);
-    renderProjects(allProjects, currentCategory);
-});
-/* PROJECTS-PAGINATION:END */
 
 
 /* =========================================================

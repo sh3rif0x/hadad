@@ -221,32 +221,3 @@ a.footer-contact-item:hover {
         font-size: 13px;
     }
 }
-
-/* FOOTER-CREDIT:START */
-.footer-credit {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.footer-credit a {
-    color: #f2c98a;
-    font-weight: 800;
-    transition: color 0.3s ease;
-}
-
-.footer-credit a:hover {
-    color: #ffffff;
-}
-/* FOOTER-CREDIT:END */

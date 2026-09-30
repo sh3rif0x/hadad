@@ -1,343 +1,90 @@
 #!/usr/bin/env node
-/*
-  التشغيل من جذر المشروع:  node services-upgrade.js
-
-  1) data/services.json  -> 5 أقسام فقط، لكل قسم نص طويل + 20 صورة من مجلده
-  2) components/header/index.html -> قائمة الخدمات: الأقسام الـ5 + "جميع الخدمات" فقط
-  3) components/footer/index.html -> روابط الخدمات نفس الأقسام
-  4) services/template.js -> عمود صور (20 صورة) على اليمين
-  5) services/style.css -> نص كبير + شبكة الصور
-
-  نسخ احتياطية: *.svc.bak  (شغّله أكثر من مرة بأمان)
-*/
+// Run from the site root:  node add-footer-credit.js
 const fs = require("fs");
 const path = require("path");
 
-const ROOT = process.cwd();
-const ASSETS = path.join(ROOT, "assets");
-if (!fs.existsSync(ASSETS)) { console.error("✖ شغّل السكربت من جذر المشروع (فيه assets)"); process.exit(1); }
+const NAME = "علي شريف";
+const LABEL = "تم تصميم وتطوير هذا الموقع بواسطة";
+const LINK = "https://wa.me/201279924599";
 
-const P = (...a) => path.join(ROOT, ...a);
-function backup(p) { if (fs.existsSync(p) && !fs.existsSync(p + ".svc.bak")) fs.copyFileSync(p, p + ".svc.bak"); }
-function esc(s) { return s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&"); }
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
-/* ---------------- الصور: 20 صورة من كل مجلد ---------------- */
-const dirs = fs.readdirSync(ASSETS).filter(n => fs.statSync(path.join(ASSETS, n)).isDirectory());
-const findDir = key => dirs.find(d => d.includes(key));
+// find components/footer (works from the root or from a sub-folder)
+let dir = path.join(__dirname, "components", "footer");
+if (!fs.existsSync(dir)) dir = path.join(__dirname, "..", "components", "footer");
 
-function gallery(key, count = 20) {
-  const dir = findDir(key);
-  if (!dir) { console.warn("⚠ لم أجد مجلد: " + key); return []; }
-  let files = fs.readdirSync(path.join(ASSETS, dir)).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort();
-  const nice = files.filter(f => !/\(copy/i.test(f));
-  const copies = files.filter(f => /\(copy/i.test(f));
+const htmlFile = path.join(dir, "index.html");
+const cssFile = path.join(dir, "style.css");
 
-  // توزيع دوري بين أنواع الأسماء علشان الصور تتنوع
-  const groups = {};
-  nice.forEach(f => {
-    const k = /^[0-9a-f]{32}\./i.test(f) ? "img" : f.split("-")[0];
-    (groups[k] = groups[k] || []).push(f);
-  });
-  const lists = Object.values(groups);
-  const out = [];
-  for (let i = 0; out.length < count && lists.some(l => l[i]); i++) {
-    lists.forEach(l => { if (l[i] && out.length < count) out.push(l[i]); });
+for (const file of [htmlFile, cssFile]) {
+  if (!fs.existsSync(file)) {
+    console.error("✖ missing: " + file + " (run this from the site root)");
+    process.exit(1);
   }
-  for (const c of copies) { if (out.length >= count) break; out.push(c); }
-  return out.map(f => "/assets/" + encodeURIComponent(dir) + "/" + encodeURIComponent(f));
+  if (!fs.existsSync(file + ".credit.bak")) fs.copyFileSync(file, file + ".credit.bak");
 }
 
-/* ---------------- المحتوى ---------------- */
-const SERVICES = [
-  {
-    slug: "iron-works",
-    key: "حداد",
-    title: "جميع أعمال الحدادة",
-    heroAlt: "أعمال الحدادة في الرياض",
-    heroDescription: "بوابات وأبواب ودرابزين وسلالم وأسوار وشبابيك وهياكل حديدية، نصنعها ونركبها بمقاسات دقيقة وتشطيب نظيف في الرياض.",
-    article: {
-      introTitle: "كل ما تحتاجه من الحديد في مكان واحد",
-      intro: "نتولى أعمال الحدادة كاملة من أول القياس في الموقع حتى التركيب والدهان النهائي. سواء كنت تجهز فيلا جديدة أو تجدد منزلًا قائمًا أو تفتح محلًا، نصنع لك القطعة الحديدية المناسبة للمكان والاستخدام، بلحام متقن ودهان يتحمل شمس الرياض.",
-      sections: [
-        { title: "البوابات الحديد", content: "البوابة هي أول ما يراه الزائر، لذلك نصممها لتنسجم مع واجهة المبنى. ننفذ البوابات المفصلية والسحاب، بتصاميم بسيطة أو مزخرفة، ويمكن تجهيزها بمحرك وجهاز تحكم عن بعد. نحدد المقاس حسب فتحة المدخل وطريقة الاستخدام اليومي." },
-        { title: "الأبواب الحديد", content: "نصنع أبواب الفلل والمداخل والمحلات والمستودعات بسماكات مناسبة لكل استخدام. يمكن دمج الحديد مع الزجاج السيكوريت لإضاءة أفضل ومظهر عصري، مع مفصلات وأقفال قوية تتحمل الاستخدام المتكرر." },
-        { title: "الدرابزين والسلالم", content: "الدرابزين عنصر أمان قبل أن يكون عنصر جمال. نراعي الارتفاع والمسافات بين القضبان وقوة التثبيت، ونصنع سلالم داخلية وخارجية مستقيمة أو حلزونية، ويمكن دمج الخشب أو الرخام أو الزجاج مع الهيكل الحديدي." },
-        { title: "الأسوار وحمايات الشبابيك", content: "أسوار مفرغة أو مصمتة للفلل والاستراحات والمزارع، وحمايات شبابيك بتصاميم عربية أو عصرية، مع إمكانية جعلها قابلة للفتح للتنظيف والطوارئ. تثبت الأعمدة على قواعد قوية ويفحص الاستقامة قبل التسليم." },
-        { title: "الهياكل الحديدية والهناجر", content: "نخطط الأعمدة والبحور حسب المساحة والاستخدام، ثم نصنع الهيكل ونركبه ونغطيه بالساندوتش بانل أو الصاج حسب الميزانية. مناسب للمستودعات والورش والمرافق التي تحتاج مساحة واسعة وتنفيذًا سريعًا." },
-        { title: "اللحام ومعالجة الحديد", content: "جودة اللحام هي ما يحدد عمر العمل. نستخدم الطريقة المناسبة لكل قطعة، ثم نصنفر نقاط اللحام، ونعالج الحديد بطبقة أساس مضادة للصدأ قبل الدهان، لتبقى القطعة بحالة جيدة لسنوات." },
-        { title: "الصيانة والترميم", content: "قد لا تحتاج أعمالك القديمة إلى استبدال كامل. نفحص القطعة، ونزيل الصدأ، ونقوي نقاط الضعف، ونستبدل المفصلات والأقفال التالفة، ثم نعيد الدهان، ونخبرك بصراحة متى يكون الاستبدال هو الأنسب." },
-        { title: "كيف نعمل معك؟", content: "تتواصل معنا وترسل صورة المكان، نعاين الموقع ونأخذ المقاسات، نرسل لك عرضًا واضحًا بالتصميم والخامة، ثم نصنع ونركب ونسلم بتشطيب نظيف. تجد على اليمين نماذج حقيقية من تنفيذنا لتختار ما يناسبك." }
-      ],
-      faq: [
-        { question: "هل تنفذون التصميم الذي أريده؟", answer: "نعم، أرسل صورة أو فكرة وننفذها بمقاس مكانك، ونقترح تعديلات تحسن الشكل والمتانة." },
-        { question: "هل توجد معاينة قبل التنفيذ؟", answer: "نعم، نزور الموقع ونأخذ المقاسات ونحدد التكلفة قبل البدء." },
-        { question: "كيف أحمي الحديد من الصدأ؟", answer: "بتنظيف السطح ووضع طبقة أساس مضادة للصدأ ثم دهان مناسب، مع فحص دوري وإعادة دهان عند الحاجة." },
-        { question: "هل يمكن دمج الحديد مع الزجاج أو الخشب؟", answer: "نعم، وهو من التصاميم العصرية الشائعة للأبواب والدرابزين والسلالم." },
-        { question: "هل تنفذون في جميع أحياء الرياض؟", answer: "نعم، نخدم أحياء الرياض والمناطق القريبة منها، تواصل معنا لتأكيد التوفر." }
-      ]
-    }
-  },
-  {
-    slug: "shades",
-    key: "مظلات",
-    title: "المظلات",
-    heroAlt: "مظلات في الرياض",
-    heroDescription: "مظلات سيارات وحدائق ومجالس وأسطح ومداخل وبرجولات، بهياكل حديد قوية وتغطية مناسبة لحرارة الرياض.",
-    article: {
-      introTitle: "مظلات تحمي مساحتك وتضيف لها قيمة",
-      intro: "المظلة الجيدة تحمي سيارتك وجلستك من الشمس والغبار، وتضيف مساحة جديدة تستخدمها طوال السنة. نصمم كل مظلة حسب أبعاد الموقع وعدد السيارات واتجاه الشمس والرياح، بهيكل حديد معالج وتغطية تناسب استخدامك.",
-      sections: [
-        { title: "مظلات السيارات والمواقف", content: "نحدد الأبعاد حسب مساحة الموقف وعدد السيارات ومسار الدخول والخروج. ننفذ مظلات للفلل والمجمعات السكنية والمحلات والمنشآت، بأعمدة موزعة بحيث لا تعيق الحركة وبارتفاع يناسب السيارات الكبيرة." },
-        { title: "مظلات الحدائق والجلسات", content: "جلسة ظليلة في الحديقة أو بجانب المسبح تغير طريقة استخدامك للمنزل. نصمم هياكل أنيقة بدهان مقاوم للشمس والرطوبة، مع تغطية تسمح بالإضاءة وتحجب الحرارة، وتجهيز أماكن للإنارة والمراوح." },
-        { title: "مظلات المجالس والأسطح", content: "الأسطح مكشوفة للرياح، لذلك نهتم بالتثبيت والتحمل والتصريف. نحول السطح أو التراس إلى جلسة مريحة بمظلة مصممة لهذه الظروف، ويمكن تغطيتها بالساندوتش بانل لعزل أفضل." },
-        { title: "مظلات المداخل والواجهات", content: "مظلة المدخل تحميك من الشمس والمطر وتعطي الواجهة طابعًا مميزًا. ننفذ الأشكال المستقيمة والمقوسة والمزخرفة، ويمكن دمج الزجاج السيكوريت مع الإطار الحديدي." },
-        { title: "أشكال المظلات", content: "الهرمية تناسب المساحات المربعة والجلسات، والمائلة تناسب الجدران والواجهات وتصرف المياه بسهولة، والمقوسة تعطي مظهرًا انسيابيًا عصريًا، والبرجولات تعطي ظلًا جزئيًا وشكلًا جماليًا للحدائق." },
-        { title: "خيارات التغطية", content: "البولي كربونيت يعطي إضاءة طبيعية وعمرًا طويلًا، والساندوتش بانل يعطي عزلًا حراريًا أفضل، وقماش الـ PVC خيار اقتصادي متعدد الألوان. نرشح لك الأنسب بعد معرفة الاستخدام والميزانية." },
-        { title: "لماذا تدوم مظلاتنا؟", content: "لأننا نختار سماكة الأعمدة المناسبة للمساحة والرياح، ونثبتها على قواعد قوية، ونعطي ميلانًا كافيًا لتصريف الأمطار، ونعالج الحديد بالأساس قبل الدهان. هذه التفاصيل هي ما يفرق بين مظلة تدوم وأخرى تحتاج تعديلًا بعد فترة قصيرة." }
-      ],
-      faq: [
-        { question: "كم تستغرق عملية تركيب المظلة؟", answer: "غالبًا من يوم إلى بضعة أيام حسب المساحة ونوع التغطية." },
-        { question: "ما أفضل تغطية للمظلات؟", answer: "البولي كربونيت والساندوتش بانل خيارات ممتازة، والقماش خيار اقتصادي. الأنسب يعتمد على الاستخدام والميزانية." },
-        { question: "هل تتحمل المظلات الرياح؟", answer: "نعم عند اختيار الأعمدة والتثبيت المناسبين، ونصمم الهيكل حسب موقعك." },
-        { question: "هل يمكن تصميم المظلة حسب شكل الفيلا؟", answer: "نعم، نختار الشكل واللون بما ينسجم مع الواجهة." },
-        { question: "كيف أعرف المقاس المناسب؟", answer: "لا تحتاج مقاسات دقيقة، نعاين الموقع ونأخذ المقاسات ونقترح الشكل." }
-      ]
-    }
-  },
-  {
-    slug: "screens",
-    key: "سواتر",
-    title: "السواتر",
-    heroAlt: "سواتر في الرياض",
-    heroDescription: "سواتر حديد ومزخرفة وساندوتش بانل للفلل والأسطح والمزارع والمسابح والمواقع، خصوصية وحماية بتنفيذ أنيق.",
-    article: {
-      introTitle: "خصوصية كاملة بتصميم يناسب مكانك",
-      intro: "الساتر يحمي خصوصيتك ويقلل الغبار والرياح ويرتب شكل المكان. نصنع سواتر بخامات وتصاميم متنوعة، ونحدد الارتفاع وطريقة التثبيت بعد معاينة الموقع، حتى تحصل على حجب للرؤية دون التضحية بالتهوية والإضاءة.",
-      sections: [
-        { title: "سواتر الفلل والأسوار", content: "يمكن تركيب الساتر فوق السور القائم لزيادة الارتفاع بدل هدمه وبنائه من جديد، بعد التأكد من قدرة السور على التحمل. نختار خامة خفيفة وتصميمًا يقلل ضغط الرياح." },
-        { title: "سواتر الأسطح والشرفات", content: "لتستخدم السطح أو البلكونة دون شعور بالانكشاف، نصمم سواتر بشرائح أو ألواح مفرغة تحجب الرؤية وتسمح بمرور الهواء والضوء، ويمكن دمجها مع الدرابزين الحالي." },
-        { title: "السواتر المزخرفة", content: "الألواح المفرغة بزخارف إسلامية أو أنماط هندسية عصرية تحول الساتر إلى عنصر جمالي، وتخلق ظلالًا جميلة. نقص الحديد بدقة ونعالجه ونديهنه بلون يناسب المكان." },
-        { title: "سواتر المسابح والاستراحات والمزارع", content: "نراعي الرطوبة بمعالجة الحديد جيدًا ودهان مقاوم للشمس، ونترك تهوية كافية حتى لا تحبس الحرارة. مناسبة للجلسات والمسابح والمرافق التي تحتاج خصوصية وحماية من الغبار." },
-        { title: "سواتر الساندوتش بانل", content: "خيار سريع واقتصادي للأسوار والمواقع والمزارع، ألواحه خفيفة وسريعة التركيب وتحجب الرؤية بشكل جيد، وتثبت على أعمدة حديد مثبتة على قواعد مناسبة." },
-        { title: "سواتر المكيفات والخزانات ومداخل المواقف", content: "نخفي المعدات على السطح مع ترك تهوية كافية وإمكانية الوصول للصيانة، ونصمم سواتر لمداخل الفلل والمواقف تحجب الرؤية دون إعاقة حركة السيارات." },
-        { title: "كيف نحدد الارتفاع والسعر؟", content: "يعتمد الارتفاع على المباني المجاورة وزاوية النظر وأحمال الرياح، ويعتمد السعر على الطول والخامة وتعقيد التصميم وصعوبة الموقع. بعد المعاينة نرسل لك عرضًا واضحًا قبل البدء." }
-      ],
-      faq: [
-        { question: "هل يمكن تركيب ساتر فوق سور موجود؟", answer: "نعم بعد معاينة السور والتأكد من قدرته على تحمل الوزن الإضافي." },
-        { question: "هل يؤثر الساتر على التهوية؟", answer: "يمكن اختيار تصميم مفرغ جزئيًا يحجب الرؤية ويسمح بمرور الهواء والضوء." },
-        { question: "هل تتحمل السواتر الرياح؟", answer: "نعم مع اختيار السماكة والتثبيت المناسبين للارتفاع." },
-        { question: "هل تنفذون أطوالًا كبيرة؟", answer: "نعم، نقسم العمل على أجزاء حسب طول الموقع." },
-        { question: "هل يمكن تنفيذ تصميم خاص؟", answer: "نعم، أرسل صورة أو فكرة ونجهز لك تصميمًا مناسبًا." }
-      ]
-    }
-  },
-  {
-    slug: "sandwich-panel",
-    key: "ساندوتش",
-    title: "الساندوتش بانل",
-    heroAlt: "ساندوتش بانل في الرياض",
-    heroDescription: "غرف ومجالس وملاحق أسطح ومستودعات وأسقف وجدران بالساندوتش بانل، عزل حراري وتنفيذ سريع بمقاسات مخصصة.",
-    article: {
-      introTitle: "بناء سريع وعزل جيد بتكلفة مدروسة",
-      intro: "الساندوتش بانل ألواح من طبقتين معدنيتين بينهما مادة عازلة، تجمع الغطاء والعزل في لوح واحد. نستخدمه لبناء غرف ومجالس ومستودعات وملاحق بسرعة، ويقلل الحرارة داخل المكان ويخفف الحمل على التكييف في صيف الرياض.",
-      sections: [
-        { title: "الغرف والمجالس الجاهزة", content: "نصمم الغرفة أو المجلس بالمقاس والتقسيم الداخلي الذي تريده، مع أبواب ونوافذ وتجهيزات للإنارة والتكييف. يمكن استخدامها كمجلس خارجي أو غرفة إضافية أو مكتب." },
-        { title: "ملاحق الأسطح", content: "لخفة وزنه يناسب استغلال السطح بغرفة أو مخزن أو جلسة مغلقة جزئيًا. قبل البدء نتأكد من قدرة السطح على التحمل ونخطط للتصريف والعزل وطريقة الوصول." },
-        { title: "المستودعات والورش والهناجر", content: "أسقف وجدران الساندوتش بانل تقلل الحرارة والضوضاء وتسرع التنفيذ مقارنة بالصاج العادي، ويمكن توسعة المبنى لاحقًا إذا خططنا لذلك من البداية." },
-        { title: "غرف الحراسة والأكشاك", content: "حل جاهز وسريع لغرف الحراس والأكشاك والمعارض المؤقتة، بنوافذ من عدة جهات وباب آمن، ويمكن نقلها أو تعديلها لاحقًا." },
-        { title: "غرف التخزين والتبريد", content: "الوصلات المحكمة والسطح الأملس يجعلانه مناسبًا للتخزين. نحدد السماكة والعازل حسب درجة الحرارة المطلوبة وننسق مع مختصي التبريد لوحدات التبريد." },
-        { title: "الفوم أم الصوف الصخري؟", content: "الفوم اقتصادي وخفيف ومناسب للمظلات والملاحق، والصوف الصخري أفضل في مقاومة الحرارة العالية والعزل الصوتي. نرشح لك النوع بعد معرفة الاستخدام والاشتراطات." },
-        { title: "جودة التركيب", content: "أهم ما يحدد الأداء هو إحكام الوصلات، وتثبيت مناسب بالبراغي الصحيحة، وميلان كافٍ للسقف، وقص دقيق عند الفتحات. نراعي هذه التفاصيل لتبقى الغرفة عازلة وخالية من التسرب." }
-      ],
-      faq: [
-        { question: "هل الساندوتش بانل عازل فعلًا؟", answer: "نعم، الطبقة العازلة داخله تقلل انتقال الحرارة بشكل واضح مقارنة بالصاج العادي." },
-        { question: "هل يمكن بناء غرفة بمقاس خاص؟", answer: "نعم، نحدد المقاسات والتقسيم حسب المساحة والاستخدام." },
-        { question: "هل يناسب الاستخدام الخارجي؟", answer: "نعم في عدد من التطبيقات الخارجية حسب التصميم وطبيعة الموقع." },
-        { question: "هل يمكن تركيب تكييف؟", answer: "نعم، نجهز مكان الوحدة أثناء التركيب." },
-        { question: "هل يحتاج تراخيص؟", answer: "تختلف المتطلبات حسب الجهات المعنية، والأفضل التأكد قبل التنفيذ." }
-      ]
-    }
-  },
-  {
-    slug: "tempered-glass",
-    key: "زجاج",
-    title: "الزجاج السيكوريت",
-    heroAlt: "زجاج سيكوريت في الرياض",
-    heroDescription: "أبواب وواجهات وقواطع ودرابزين وغرف زجاجية بالزجاج السيكوريت، أمان وإضاءة ومظهر عصري بتركيب دقيق.",
-    article: {
-      introTitle: "زجاج أقوى وأكثر أمانًا لمساحات أكثر إشراقًا",
-      intro: "الزجاج السيكوريت معالج حراريًا ليصبح أقوى من الزجاج العادي بعدة مرات، وعند كسره يتفتت إلى قطع صغيرة أقل حدة. ننفذه للأبواب والواجهات والقواطع والدرابزين والغرف الزجاجية، بمقاسات دقيقة وإكسسوارات مناسبة لكل استخدام.",
-      sections: [
-        { title: "الأبواب الزجاجية", content: "أبواب مفصلية أو منزلقة للمداخل والمحلات والمكاتب والشرفات، بإطار أو بدون إطار. نختار المسار والعجلات والمفصلات والأقفال المناسبة ليكون الباب سلسًا وآمنًا." },
-        { title: "الواجهات الزجاجية", content: "واجهات المحلات والمجالس المطلة على الحدائق تدخل الإضاءة الطبيعية وتوسع الإحساس بالمكان. يمكن اختيار زجاج ملون أو عاكس لتخفيف الوهج والحرارة." },
-        { title: "القواطع الزجاجية", content: "قواطع المكاتب والحمامات تفصل الأقسام دون إغلاق المكان، وتتوفر بزجاج شفاف أو مصنفر أو بأشرطة للخصوصية، بأبواب مفصلية أو منزلقة." },
-        { title: "الدرابزين الزجاجي", content: "يفتح السلالم والبلكونات ويعطي إطلالة واسعة. السماكة والتثبيت هنا أساسيان للأمان، لذلك نحددهما حسب الاستخدام ونثبت على قواعد أو مشابك ستانلس أو هيكل حديد." },
-        { title: "الغرف والمظلات الزجاجية", content: "غرف جلسات ومداخل ومظلات بإطار حديدي وزجاج، مع ميلان لتصريف الأمطار وتثبيتات مخصصة للزجاج، تعطي مظهرًا راقيًا وتحمي من الشمس والمطر." },
-        { title: "كيف نختار السماكة والنوع؟", content: "تعتمد السماكة على نوع الاستخدام ومساحة اللوح وارتفاعه ونظام التثبيت ومكان التركيب. بعض الاستخدامات كالدرابزين والواجهات الكبيرة تحتاج عناية خاصة، لذلك نحددها بعد المعاينة." },
-        { title: "لماذا تُؤخذ المقاسات بدقة؟", content: "لأن الزجاج لا يُقص ولا يُعدل بعد التقسية. نعاين الموقع ونأخذ المقاسات وأماكن الفتحات بدقة قبل التصنيع، ثم نركب بتثبيت محكم يمنع الاهتزاز والتسريب." }
-      ],
-      faq: [
-        { question: "هل الزجاج السيكوريت آمن؟", answer: "هو أكثر أمانًا من الزجاج العادي، ويتفتت إلى قطع صغيرة غير حادة عند الكسر." },
-        { question: "هل يمكن قصه بعد التصنيع؟", answer: "لا، لذلك نأخذ المقاسات بدقة قبل التقسية." },
-        { question: "كيف أنظفه؟", answer: "بمنظف زجاج عادي وقطعة ناعمة دون مواد خشنة." },
-        { question: "هل يوجد زجاج ملون أو مصنفر؟", answer: "نعم، تتوفر خيارات ملونة وعاكسة ومصنفرة ومطبوعة حسب الطلب." },
-        { question: "هل يمكن دمجه مع الحديد؟", answer: "نعم، وهو تصميم شائع للأبواب والحواجز والواجهات." }
-      ]
-    }
-  }
-];
+/* ---------------- 1) footer/index.html ---------------- */
+const HS = "<!-- FOOTER-CREDIT:START -->";
+const HE = "<!-- FOOTER-CREDIT:END -->";
 
-/* ---------------- 1) services.json ---------------- */
-const sp = P("data", "services.json");
-backup(sp);
-const out = SERVICES.map(s => {
-  const g = gallery(s.key, 20);
-  console.log("  " + s.slug.padEnd(16) + g.length + " صورة");
-  return {
-    slug: s.slug,
-    title: s.title,
-    image: g[0] || "",
-    heroAlt: s.heroAlt,
-    heroDescription: s.heroDescription,
-    gallery: g,
-    article: s.article
-  };
-});
-fs.writeFileSync(sp, JSON.stringify(out, null, 2) + "\n");
-console.log("✔ data/services.json (5 أقسام)");
+const htmlBlock = `${HS}
+<div class="footer-credit">
+    <span>${LABEL}</span>
+    <a href="${LINK}" target="_blank" rel="noopener">${NAME}</a>
+</div>
+${HE}`;
 
-/* ---------------- 2) الهيدر ---------------- */
-const hp = P("components", "header", "index.html");
-if (fs.existsSync(hp)) {
-  backup(hp);
-  let h = fs.readFileSync(hp, "utf8");
-  const links = SERVICES.map(s => '                        <a href="/services/' + s.slug + '">' + s.title + '</a>').join("\n\n");
-  const block = '<div class="services-dropdown">\n\n' + links +
-    '\n\n                        <a href="/services/" class="all-services">جميع الخدمات</a>\n\n                    </div>';
-  if (/<div class="services-dropdown">[\s\S]*?<\/div>/.test(h)) {
-    h = h.replace(/<div class="services-dropdown">[\s\S]*?<\/div>/, () => block);
-    fs.writeFileSync(hp, h);
-    console.log("✔ header: قائمة الخدمات");
-  } else console.warn("⚠ لم أجد services-dropdown في الهيدر");
+let html = fs.readFileSync(htmlFile, "utf8");
+
+// remove old copy (so re-running never duplicates)
+html = html.replace(new RegExp("\\n*" + esc(HS) + "[\\s\\S]*?" + esc(HE) + "\\n*", "g"), "\n");
+
+const closeIdx = html.lastIndexOf("</footer>");
+if (closeIdx !== -1) {
+  // put it at the very bottom, inside <footer>
+  html = html.slice(0, closeIdx).replace(/\s*$/, "\n\n") + htmlBlock + "\n" + html.slice(closeIdx);
+} else {
+  html = html.replace(/\s*$/, "\n\n") + htmlBlock + "\n";
 }
+fs.writeFileSync(htmlFile, html);
 
-/* ---------------- 3) الفوتر ---------------- */
-const fp = P("components", "footer", "index.html");
-if (fs.existsSync(fp)) {
-  backup(fp);
-  let f = fs.readFileSync(fp, "utf8");
-  const re = /(<nav\s+class="footer-links"\s+aria-label="الخدمات">)[\s\S]*?(<\/nav>)/;
-  if (re.test(f)) {
-    const items = SERVICES.map(s => '\n                <a href="/services/' + s.slug + '/">\n                    ' + s.title + '\n                </a>\n').join("");
-    f = f.replace(re, (m, a, b) => a + "\n" + items + "\n            " + b);
-    fs.writeFileSync(fp, f);
-    console.log("✔ footer: روابط الخدمات");
-  } else console.warn("⚠ لم أجد قائمة الخدمات في الفوتر");
-}
+/* ---------------- 2) footer/style.css ---------------- */
+const CS = "/* FOOTER-CREDIT:START */";
+const CE = "/* FOOTER-CREDIT:END */";
 
-/* ---------------- 4) template.js ---------------- */
-const tp = P("services", "template.js");
-backup(tp);
-let t = fs.readFileSync(tp, "utf8");
-if (!t.includes("service-gallery")) {
-  const galleryCode =
-    "    const gal = Array.isArray(service.gallery) ? service.gallery : [];\n" +
-    "    const galleryHtml = '<aside class=\"service-gallery\">' + (gal.length ? gal.map(function (src, i) {\n" +
-    "        return '<figure class=\"' + (i % 5 === 0 ? 'wide' : '') + '\"><img src=\"' + esc(getImagePath(src)) + '\" alt=\"' + esc(alt + ' ' + (i + 1)) + '\" loading=\"' + (i < 4 ? 'eager' : 'lazy') + '\"></figure>';\n" +
-    "    }).join('') : '<figure class=\"wide\"><img src=\"' + esc(image) + '\" alt=\"' + esc(alt) + '\"></figure>') + '</aside>';\n\n";
-
-  const retRe = /return `\s*<section class="service-hero">/;
-  const asideRe = /<aside class="service-sticky">[\s\S]*?<\/aside>/;
-  if (retRe.test(t) && asideRe.test(t)) {
-    t = t.replace(retRe, m => galleryCode + "    " + m);
-    t = t.replace(asideRe, "${galleryHtml}");
-    fs.writeFileSync(tp, t);
-    console.log("✔ services/template.js");
-  } else console.warn("⚠ لم أستطع تعديل template.js (الشكل مختلف)");
-} else console.log("• template.js معدّل مسبقًا");
-
-/* ---------------- 5) style.css ---------------- */
-const cp = P("services", "style.css");
-backup(cp);
-const S = "/* SVC-UPGRADE:START */", E = "/* SVC-UPGRADE:END */";
-const css = `
-.service-layout {
-    grid-template-columns: minmax(320px, 40%) minmax(0, 1fr);
-    gap: clamp(36px, 5vw, 80px);
-    width: min(1500px, 100%);
-}
-
-/* صور الخدمة: العمود الأيمن (أول عنصر في RTL) */
-.service-gallery {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    align-self: start;
-}
-
-.service-gallery figure {
-    margin: 0;
-    overflow: hidden;
-    border-radius: 18px;
-    background: #1b2645;
-    aspect-ratio: 4 / 5;
-    box-shadow: 0 14px 34px rgba(27, 38, 69, .12);
-}
-
-.service-gallery figure.wide {
+const cssBlock = `${CS}
+.footer-credit {
     grid-column: 1 / -1;
-    aspect-ratio: 16 / 10;
-}
-
-.service-gallery img {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    transition: transform .6s ease;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
 }
 
-.service-gallery figure:hover img { transform: scale(1.06); }
-
-/* نص أكبر */
-.article-header { margin-bottom: 50px; }
-.article-label { font-size: 18px; }
-.article-header h2 { font-size: clamp(40px, 4.6vw, 68px); line-height: 1.2; }
-.article-header p { font-size: 22px; line-height: 2.1; color: #5b6479; }
-
-.article-section { grid-template-columns: 80px 1fr; padding: 42px 0; }
-.article-number { font-size: 20px; }
-.article-section-content h3 { font-size: 34px; margin-bottom: 16px; }
-.article-section-content p { font-size: 20px; line-height: 2.1; color: #5b6479; }
-
-.faq-heading h2 { font-size: 46px; }
-.faq-item summary strong { font-size: 20px; }
-.faq-item p { font-size: 18px; }
-
-.article-cta h2 { font-size: 36px; }
-.article-cta p { font-size: 18px; }
-
-@media (max-width: 1000px) {
-    .service-layout { grid-template-columns: 1fr; }
-    .service-gallery { order: -1; }
-    .article-header p, .article-section-content p { font-size: 18px; }
-    .article-section-content h3 { font-size: 28px; }
+.footer-credit a {
+    color: #f2c98a;
+    font-weight: 800;
+    transition: color 0.3s ease;
 }
 
-@media (max-width: 650px) {
-    .service-gallery { gap: 10px; }
-    .service-gallery figure { border-radius: 14px; }
-    .article-header h2 { font-size: 36px; }
-    .article-header p { font-size: 17px; }
-    .article-section { grid-template-columns: 1fr; padding: 30px 0; }
-    .article-section-content h3 { font-size: 24px; }
-    .article-section-content p { font-size: 16.5px; }
+.footer-credit a:hover {
+    color: #ffffff;
 }
-`;
-let c = fs.readFileSync(cp, "utf8");
-c = c.replace(new RegExp("\\n*" + esc(S) + "[\\s\\S]*?" + esc(E) + "\\n*", "g"), "\n");
-fs.writeFileSync(cp, c.replace(/\s*$/, "\n") + "\n" + S + css + E + "\n");
-console.log("✔ services/style.css");
+${CE}`;
 
-console.log("\nخلص. افتح http://localhost:5500/services/sandwich-panel وسوّي Ctrl+Shift+R.");
-console.log("الأقسام: " + SERVICES.map(s => "/services/" + s.slug).join("  |  "));
+let css = fs.readFileSync(cssFile, "utf8");
+css = css.replace(new RegExp("\\n*" + esc(CS) + "[\\s\\S]*?" + esc(CE) + "\\n*", "g"), "\n");
+fs.writeFileSync(cssFile, css.replace(/\s*$/, "\n") + "\n" + cssBlock + "\n");
+
+console.log("✔ footer credit added");
+console.log("  Hard refresh: Ctrl+Shift+R.  Backups: *.credit.bak");
