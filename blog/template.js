@@ -222,7 +222,7 @@ export function renderPagination(total, page, perPage) {
 
     var seq = [];
     for (var i = 1; i <= pages; i++) {
-        if (i === 1 || i === pages || Math.abs(i - page) <= 1) seq.push(i);
+        if (i === 1 || i === pages || Math.abs(i - page) <= 3) seq.push(i);
         else if (seq[seq.length - 1] !== "...") seq.push("...");
     }
 

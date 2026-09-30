@@ -33,7 +33,7 @@ function pagesTotal() { return Math.max(1, Math.ceil(list.length / PAGE)); }
 function seq(total, p) {
   var out = [], last = 0;
   for (var i = 1; i <= total; i++) {
-    if (i === 1 || i === total || Math.abs(i - p) <= 2) {
+    if (i === 1 || i === total || Math.abs(i - p) <= 3) {
       if (last && i - last > 1) out.push("…");
       out.push(i);
       last = i;
@@ -47,16 +47,12 @@ function renderPager() {
   if (!box) return;
   var total = pagesTotal();
   if (total <= 1) { box.innerHTML = ""; return; }
-  var R = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
-  var L = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
-  var h = '<div class="pgn-bar">';
-  h += '<button type="button" class="pgn-nav" aria-label="السابق" data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + '>' + R + '</button>';
+  var h = '<button type="button" class="pg-btn pg-nav" data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + '>→ السابق</button>';
   seq(total, page).forEach(function (n) {
-    if (n === "…") h += '<span class="pgn-dots">···</span>';
-    else h += '<button type="button" class="pgn-num' + (n === page ? " on" : "") + '" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + '>' + n + '</button>';
+    if (n === "…") h += '<span class="pg-dots">…</span>';
+    else h += '<button type="button" class="pg-btn' + (n === page ? " is-active" : "") + '" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + '>' + n + '</button>';
   });
-  h += '<button type="button" class="pgn-nav" aria-label="التالي" data-p="' + (page + 1) + '"' + (page === total ? " disabled" : "") + '>' + L + '</button>';
-  h += '</div><div class="pgn-info">صفحة ' + page + ' من ' + total + '<i></i>' + list.length + ' صورة</div>';
+  h += '<button type="button" class="pg-btn pg-nav" data-p="' + (page + 1) + '"' + (page === total ? " disabled" : "") + '>التالي ←</button>';
   box.innerHTML = h;
 }
 

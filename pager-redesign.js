@@ -1,121 +1,97 @@
+// شغّله من جذر الموقع:  node pager-unify.js
 const fs = require("fs");
 const path = require("path");
 const ROOT = process.cwd();
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const WINDOW = 3; // عدد الأرقام قبل وبعد الصفحة الحالية (غيّره لو عايز أكتر)
 
-/* ---------- JS: new markup (chevron icons, no text buttons) ---------- */
+/* ---------- 1) المدونة: زيادة الأرقام ---------- */
+const tp = path.join(ROOT, "blog", "template.js");
+let t = fs.readFileSync(tp, "utf8");
+if (/Math\.abs\(i - page\) <= \d+/.test(t)) {
+  t = t.replace(/Math\.abs\(i - page\) <= \d+/, "Math.abs(i - page) <= " + WINDOW);
+  fs.writeFileSync(tp, t);
+  console.log("blog/template.js: تم");
+} else console.log("blog/template.js: ما لقيت الدالة");
+
+/* ---------- 2) المشاريع: نفس شكل المدونة ---------- */
 const sp = path.join(ROOT, "projects", "script.js");
 let js = fs.readFileSync(sp, "utf8");
+
+js = js.replace(/Math\.abs\(i - p\) <= \d+/, "Math.abs(i - p) <= " + WINDOW);
+
 const fn = String.raw`function renderPager() {
   var box = document.querySelector("#pgPager");
   if (!box) return;
   var total = pagesTotal();
   if (total <= 1) { box.innerHTML = ""; return; }
-  var R = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
-  var L = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
-  var h = '<div class="pgn-bar">';
-  h += '<button type="button" class="pgn-nav" aria-label="السابق" data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + '>' + R + '</button>';
+  var h = '<button type="button" class="pg-btn pg-nav" data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + '>→ السابق</button>';
   seq(total, page).forEach(function (n) {
-    if (n === "…") h += '<span class="pgn-dots">···</span>';
-    else h += '<button type="button" class="pgn-num' + (n === page ? " on" : "") + '" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + '>' + n + '</button>';
+    if (n === "…") h += '<span class="pg-dots">…</span>';
+    else h += '<button type="button" class="pg-btn' + (n === page ? " is-active" : "") + '" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + '>' + n + '</button>';
   });
-  h += '<button type="button" class="pgn-nav" aria-label="التالي" data-p="' + (page + 1) + '"' + (page === total ? " disabled" : "") + '>' + L + '</button>';
-  h += '</div><div class="pgn-info">صفحة ' + page + ' من ' + total + '<i></i>' + list.length + ' صورة</div>';
+  h += '<button type="button" class="pg-btn pg-nav" data-p="' + (page + 1) + '"' + (page === total ? " disabled" : "") + '>التالي ←</button>';
   box.innerHTML = h;
 }
 `;
-if (/function renderPager\(\) \{[\s\S]*?\n\}\n/.test(js)) {
-  js = js.replace(/function renderPager\(\) \{[\s\S]*?\n\}\n/, () => fn);
+const re = /function renderPager\(\) \{[\s\S]*?\n\}\n/;
+if (re.test(js)) {
+  js = js.replace(re, () => fn);
   fs.writeFileSync(sp, js);
-  console.log("script.js updated");
-} else console.log("renderPager not found - run projects-pagination.js first");
+  console.log("projects/script.js: تم");
+} else console.log("projects/script.js: ما لقيت renderPager");
 
-/* ---------- CSS ---------- */
-const S = "/* PG-PAGER-CSS:START */", E = "/* PG-PAGER-CSS:END */";
-const css = S + String.raw`
-#projectsGrid { transition: opacity .25s ease, transform .25s ease; }
-#projectsGrid.swap { opacity: 0; transform: translateY(10px); }
-.pg-more { display: none !important; }
-
+/* ---------- 3) CSS للمشاريع (نفس ستايل المدونة) ---------- */
+const S = "/* PG-UNIFY:START */", E = "/* PG-UNIFY:END */";
+const css = S + `
 .pgn {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
-  margin-top: 70px;
+  justify-content: center;
+  gap: 8px !important;
+  margin-top: 50px !important;
 }
-.pgn-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid rgba(11, 42, 58, .08);
-  box-shadow: 0 18px 44px rgba(11, 42, 58, .10);
-}
-.pgn-num, .pgn-nav {
-  display: grid;
-  place-items: center;
-  width: 46px;
+.pgn:empty { display: none !important; }
+.pgn .pg-btn {
+  min-width: 46px;
   height: 46px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: #0b2a3a;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   cursor: pointer;
-  transition: background .3s ease, color .3s ease, transform .3s ease, box-shadow .3s ease;
+  transition: var(--transition);
 }
-.pgn-num:hover:not(.on) { background: #eaf1f5; color: #176d91; }
-.pgn-nav {
-  color: #176d91;
-  background: #f5f8fa;
+.pgn .pg-btn:hover:not(:disabled):not(.is-active) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
 }
-.pgn-nav:hover:not(:disabled) { background: #0b2a3a; color: #fff; transform: scale(1.06); }
-.pgn-nav:disabled { opacity: .3; cursor: not-allowed; }
-
-.pgn-num.on {
-  background: linear-gradient(145deg, #e8944a, #d9782d);
+.pgn .pg-btn.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
   color: #fff;
   cursor: default;
-  box-shadow: 0 8px 20px rgba(217, 120, 45, .42);
 }
-.pgn-dots {
-  min-width: 26px;
-  text-align: center;
-  color: #9fb2bd;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-.pgn-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #5a7686;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .05em;
-}
-.pgn-info i {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #d9782d;
-}
-
+.pgn .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+.pgn .pg-nav { padding: 0 20px; }
+.pgn .pg-dots { min-width: 24px; text-align: center; color: var(--color-text-light); font-weight: 800; }
 @media (max-width: 650px) {
-  .pgn { margin-top: 46px; }
-  .pgn-bar { padding: 6px; gap: 2px; }
-  .pgn-num, .pgn-nav { width: 38px; height: 38px; font-size: 14px; }
-  .pgn-dots { min-width: 18px; }
+  .pgn { gap: 6px !important; margin-top: 36px !important; }
+  .pgn .pg-btn { min-width: 40px; height: 40px; padding: 0 10px; font-size: 14px; }
+  .pgn .pg-nav { padding: 0 14px; }
 }
 ` + E;
+
 const cp = path.join(ROOT, "projects", "style.css");
 let c = fs.readFileSync(cp, "utf8");
-const a = c.indexOf(S), b = c.indexOf(E);
-if (a > -1 && b > a) c = c.slice(0, a) + c.slice(b + E.length);
+c = c.replace(new RegExp("\\n*" + esc(S) + "[\\s\\S]*?" + esc(E) + "\\n*", "g"), "\n");
 fs.writeFileSync(cp, c.replace(/\s*$/, "\n") + "\n" + css + "\n");
-console.log("style.css updated. Hard refresh: Ctrl+Shift+R");
+console.log("projects/style.css: تم");
+console.log("اعمل Hard refresh: Ctrl+Shift+R");
